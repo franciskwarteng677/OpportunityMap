@@ -347,6 +347,20 @@ export function initialiseProfileExperience({ root = document, storage } = {}) {
     elements.status.textContent = message;
   }
 
+  function dispatchProfileChange(reason) {
+    const view = root.defaultView || root.ownerDocument?.defaultView;
+    if (!view?.CustomEvent || typeof root.dispatchEvent !== "function") return;
+
+    root.dispatchEvent(new view.CustomEvent("opportunitymap:profilechange", {
+      detail: {
+        reason,
+        exists: profileExists,
+        valid: savedProfileIsValid,
+        profile: savedProfileIsValid ? normaliseProfile(currentProfile) : createEmptyProfile(),
+      },
+    }));
+  }
+
   function setView(view) {
     elements.emptyView.hidden = view !== "empty";
     elements.formView.hidden = view !== "form";
@@ -526,6 +540,7 @@ export function initialiseProfileExperience({ root = document, storage } = {}) {
     updateCreateButtonLabels();
     setStatus("success", saved.message);
     showSummary({ focus: true });
+    dispatchProfileChange("saved");
   });
 
   function handleFormChange(event) {
@@ -596,6 +611,7 @@ export function initialiseProfileExperience({ root = document, storage } = {}) {
     updateCreateButtonLabels();
     setStatus("success", cleared.message);
     showEmpty({ focus: true });
+    dispatchProfileChange(pendingClearMode === "state" ? "reset" : "cleared");
   });
 
   elements.resetState.hidden = !["corrupted", "unsupported"].includes(loaded.status);

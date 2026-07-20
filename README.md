@@ -2,7 +2,7 @@
 
 OpportunityMap is a static scholarship and opportunity finder designed for Ghanaian and African students. It brings scholarships, competitions, fellowships, research programmes, summer programmes, internships, and other academic pathways into one searchable, student-friendly directory.
 
-This repository contains the professional directory plus the first OpenAI Build Week phase of **OpportunityMap AI Coach**. It remains intentionally framework-free, with no backend, database, account system, or API integration. Students can browse the full directory without creating a profile.
+This repository contains the professional directory plus the first two OpenAI Build Week phases of **OpportunityMap AI Coach**. It remains intentionally framework-free, with no backend, database, account system, or API integration. Students can browse the full directory without creating a profile.
 
 ## The problem
 
@@ -19,6 +19,8 @@ OpportunityMap offers one clear place to:
 - narrow results by category, country or reach, field of study, and deadline status;
 - understand key details before investing time in an application; and
 - continue to the official programme source for current requirements and submission steps.
+
+Students who choose to create a private browser profile can also generate a transparent ranking of the same verified directory. Each personalised result explains the profile factors that were compared and presents eligibility guidance separately from relevance.
 
 The interface uses careful language and direct official links. A “verified source” label means the programme's official page was reviewed when the starter dataset was prepared; it is not an endorsement, and applicants should always reconfirm dates and eligibility.
 
@@ -42,14 +44,20 @@ The interface uses careful language and direct official links. A “verified sou
 - Per-card source name, verification date, student level, funding type, and application context
 - Data-driven Opportunity Distribution panel with a lightweight Africa regional view
 - “How OpportunityMap Works” guidance
-- Real OpportunityMap AI Coach introduction with honest Phase 1 scope
+- Real OpportunityMap AI Coach introduction with transparent Phase 2 scope
 - Accessible landmarks, labels, focus states, status announcements, and reduced-motion support
 - Accessible student profile creation, editing, summary, completeness, and clearing
-- Canonical internal profile values for future explainable personalization
+- Canonical internal profile values for deterministic personalisation
 - Private, no-account profile persistence in the current browser only
 - Defensive handling for missing, corrupted, unsupported, or unwritable browser storage
+- Ranked profile matches across all nine existing verified opportunities
+- Separate views for best matches, all opportunities, currently actionable opportunities, and closed opportunities
+- Weighted profile-match percentages with comparable-factor confidence text
+- Two or three plain-language ranking explanations that lead with positive matches and clearly label preference differences or unavailable comparisons
+- Evidence-limited eligibility guidance that distinguishes represented matches, known conflicts, missing information, and source verification
+- Per-result score-calculation disclosures and direct official-source links
 
-Opportunity matching, eligibility scoring, saved opportunities, action plans, and API features are not active in this phase. See `BUILD_WEEK_BASELINE.md` for the exact pre-hackathon boundary.
+Profile-match scores are relevance scores, not eligibility, admission, selection, or funding probabilities. Saved opportunities, action plans, progress tracking, and API features are not active in this phase. See `BUILD_WEEK_BASELINE.md` for the exact pre-hackathon boundary and `BUILD_WEEK_PROGRESS.md` for the phased Build Week record.
 
 ## Technology stack
 
@@ -67,18 +75,25 @@ There are no runtime dependencies, build tools, frameworks, backend services, or
 ```text
 OpportunityMap/
 ├── BUILD_WEEK_BASELINE.md
+├── BUILD_WEEK_PROGRESS.md
 ├── index.html
 ├── styles.css
 ├── app.js
 ├── js/
 │   ├── config.js
+│   ├── eligibility.js
+│   ├── matches-ui.js
+│   ├── matching.js
 │   ├── profile.js
 │   └── storage.js
 ├── data/
 │   └── opportunities.json
 ├── tests/
 │   ├── config.test.js
+│   ├── data.test.js
+│   ├── eligibility.test.js
 │   ├── markup.test.js
+│   ├── matching.test.js
 │   ├── profile.test.js
 │   └── storage.test.js
 ├── package.json
@@ -113,11 +128,12 @@ The project also works with editor tools such as Live Server. If the page is ope
 
 All opportunity cards come from `data/opportunities.json`. The starter dataset is deliberately small so the information model and interface remain easy to inspect.
 
-Every object uses this structure:
+Every object retains its original display fields and now has versioned matching metadata. The abbreviated structure is:
 
 ```json
 {
   "id": "opp-001",
+  "schemaVersion": 2,
   "title": "Opportunity title",
   "category": "Scholarships",
   "country": "Ghana",
@@ -133,13 +149,36 @@ Every object uses this structure:
   "sourceName": "Official programme owner",
   "officialUrl": "https://official.example.org/",
   "lastVerified": "2026-07-09",
-  "verified": true
+  "verified": true,
+  "matching": {
+    "schemaVersion": 1,
+    "educationStages": [],
+    "fields": [],
+    "categories": [],
+    "eligibleNationalities": [],
+    "eligibleResidencies": [],
+    "geographicReach": [],
+    "fundingPreferences": [],
+    "mobilityRequired": null,
+    "experienceLevels": [],
+    "minAge": null,
+    "maxAge": null,
+    "goalKeywords": [],
+    "criteriaSources": {}
+  },
+  "eligibilityGuidance": {
+    "schemaVersion": 1,
+    "representedRequirements": [],
+    "unrepresentedRequirements": []
+  }
 }
 ```
 
 Deadline values may be ISO dates, rolling windows, vacancy-specific dates, or a clearly stated announcement status. The current filter statuses are `Open`, `Upcoming`, `Rolling`, and `Closed`.
 
-`studentLevel`, `fundingType`, and `applicationType` use concise, human-readable values so the data can later support richer filters and AI matching. `sourceName` identifies the programme owner, while `lastVerified` records the most recent manual source check as an ISO date (`YYYY-MM-DD`).
+Display information remains separate from canonical matching values. Structured values were added only where an existing record field supported them; uncertain criteria remain `null`, an empty array, or an explicitly unrepresented requirement. `criteriaSources` and requirement `sourceField` values identify the existing record fields that support the structured criterion. They are provenance aids, not a substitute for checking the current official source.
+
+`studentLevel`, `fundingType`, and `applicationType` remain concise, human-readable display values. `sourceName` identifies the programme owner, while `lastVerified` records the most recent manual source check as an ISO date (`YYYY-MM-DD`).
 
 ## Verified-source approach
 
@@ -158,13 +197,65 @@ OpportunityMap is a static site and requires no build command.
 
 The same project can also be hosted on GitHub Pages or another static hosting service.
 
-## OpportunityMap AI Coach profile foundation
+## OpportunityMap AI Coach
+
+### Phase 1: profile and persistence
 
 Students can now create a local profile containing citizenship, residence, optional age, education stage, interests, preferred categories, a broad goal, funding and mobility preferences, and experience level. Stable canonical values are stored under the versioned key `opportunityMapCoachState`.
 
 Profile data stays in the current browser. It is not uploaded, synchronized, or backed up, and it may be lost when browser data is cleared. No account is required. Students should not enter contact details, identification numbers, grades, financial data, or other sensitive information.
 
-This phase does not match or rank opportunities and does not make eligibility decisions. A later explainable layer can use the profile only after the verified opportunity data has suitable structured criteria. Manual browsing remains available at all times.
+Manual browsing remains available at all times, including when no profile exists.
+
+### Phase 2: explainable matching
+
+With a valid saved profile, a student can choose **Find my matches** to compare their profile with all nine existing opportunities. The matching engine is pure and deterministic: the same profile, opportunity data, and selected view always produce the same order and result.
+
+The score uses eight weighted relevance factors:
+
+| Factor | Weight |
+| --- | ---: |
+| Education stage | 20 |
+| Fields of interest | 20 |
+| Preferred opportunity category | 15 |
+| Citizenship, residence, or represented geographic reach | 15 |
+| Funding preference | 10 |
+| Travel or relocation preference | 5 |
+| Relevant experience level | 5 |
+| Career or study goal keywords | 10 |
+
+For every factor that has both a represented opportunity criterion and usable profile information, the engine awards the full factor weight for a match or zero for a mismatch. It calculates:
+
+```text
+profile match = round(100 × matched comparable weight / total comparable weight)
+```
+
+Unknown opportunity criteria and missing or neutral profile values are excluded from both sides of the formula. They are shown to the student instead of silently counted as failures. The confidence text reports the number of factors actually compared against the number represented for that opportunity. This means two equal percentages may be based on different amounts of information.
+
+The default **Best matches** view places currently actionable records (`Open` or `Rolling`) ahead of closed records, then orders by score, comparable-factor count, and stable opportunity ID. `Upcoming` records remain visible in Best matches and All opportunities but are not labelled currently actionable. **All opportunities** orders primarily by score; dedicated actionable and closed views filter only when the student explicitly selects them. Conflicting and closed opportunities remain available.
+
+### Relevance is not eligibility
+
+Profile relevance and eligibility guidance are deliberately computed and displayed separately. A high profile-match percentage means the represented opportunity characteristics align with the student's preferences; it does not mean the student is eligible or likely to be admitted, selected, or funded.
+
+Eligibility guidance evaluates only explicit, verified hard requirements represented in the dataset. Current represented check types are age range, education stage, and minimum experience. It uses these statuses:
+
+- `confirmed-fit`: all represented hard requirements match and there are no unresolved structured requirements;
+- `known-conflict`: at least one represented hard requirement conflicts with the profile;
+- `information-needed`: the profile lacks information needed for a represented check, or its broad value is not precise enough;
+- `verify-at-source`: the directory lacks enough structured information for a reliable determination or additional requirements remain unrepresented.
+
+Status precedence is: known conflict, then information needed, then source verification, then confirmed fit. Missing or unknown requirements never count as passes. Age conflicts are produced only when the opportunity record contains an explicit verified age boundary. Every result directs the student to check the full, current requirements at the official source.
+
+### Current limitations and scope
+
+- The directory intentionally remains the same small inventory of nine opportunities; ranking quality is limited by that coverage.
+- Matching metadata is conservative and incomplete. Unknown factors reduce the amount of comparison evidence rather than reducing the score.
+- Goal matching uses deterministic represented keywords, not semantic AI analysis.
+- Broad profile ranges, especially experience, may require the student to verify an exact requirement.
+- Programme criteria and deadlines can change after `lastVerified`; the official source is authoritative.
+- Browser profiles do not synchronize between devices or browsers and disappear if site storage is cleared.
+- There is no OpenAI or other API integration, account, backend, saved-opportunity feature, action plan, or progress tracker in Phase 2.
 
 Run the focused development tests with:
 
@@ -195,7 +286,7 @@ The JSON dataset is appropriate for the first version. A fuller platform can lat
 - optional account-based profile synchronization, if later justified;
 - saved opportunities and deadline reminders;
 - per-record verification history and automated stale-data checks;
-- personalised, explainable AI matching;
+- optional AI-assisted application planning, with appropriate privacy and source safeguards;
 - country-level mapping and opportunity analytics;
 - partner or institution submissions with moderation; and
 - a research dashboard for educational opportunity access.

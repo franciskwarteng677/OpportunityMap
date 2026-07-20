@@ -51,3 +51,34 @@ test("profile form exposes every Phase 1 field using stable names", () => {
     assert.match(html, new RegExp(`name="${fieldName}"|id="${fieldName === "fieldsOfInterest" ? "fields-of-interest-options" : fieldName === "preferredCategories" ? "preferred-categories-options" : "__not_generated__"}"`));
   }
 });
+
+test("Phase 2 matching markup exposes accessible states, views, and disclosures", () => {
+  for (const id of [
+    "matching-workspace",
+    "matching-profile-required",
+    "matching-ready",
+    "find-matches",
+    "matching-results",
+    "matching-status",
+    "matching-result-count",
+    "matching-grid",
+  ]) {
+    assert.match(html, new RegExp(`id="${id}"`));
+  }
+
+  assert.deepEqual(
+    [...html.matchAll(/data-match-view="([^"]+)"/g)].map((match) => match[1]),
+    ["best", "all", "actionable", "closed"],
+  );
+  assert.match(html, /<details class="card__score-disclosure">/);
+  assert.match(html, /How this score was calculated/);
+  assert.match(html, /role="status" aria-live="polite"/);
+  assert.match(html, /Check full current requirements at the official source before applying\./);
+});
+
+test("Phase 2 copy distinguishes profile relevance from eligibility and avoids guarantees", () => {
+  assert.match(html, /profile-match percentage/i);
+  assert.match(html, /not an\s+eligibility, admission, selection, or funding probability/i);
+  assert.match(html, /ordinary opportunity directory remains available without a profile/i);
+  assert.doesNotMatch(html, /% eligible|you will qualify|guaranteed match|guaranteed admission/i);
+});

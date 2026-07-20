@@ -492,8 +492,8 @@
             </p>
             <h2 id="coach-title">Start with a profile built around your journey.</h2>
             <p>
-              Create a student profile to prepare for personalized coaching features. In this first phase,
-              you can save and manage your profile locally in this browser; matching is not active yet.
+              Create a student profile, keep it locally in this browser, and use transparent matching to compare
+              your interests and preferences with the nine verified opportunities.
             </p>
 
             <div class="coach-intro__actions">
@@ -576,7 +576,7 @@
                 <p class="section-kicker">Student profile</p>
                 <h3 id="profile-form-title" tabindex="-1">Tell the coach what matters to you.</h3>
                 <p id="profile-privacy-description">
-                  Required fields help prepare your profile for future personalization. Do not enter sensitive details,
+                  Required fields provide the comparable information used for personalized rankings. Do not enter sensitive details,
                   identification numbers, contact information, grades, or financial information. Nothing is sent to a server.
                 </p>
               </div>
@@ -785,7 +785,7 @@
               <div>
                 <p class="section-kicker">Saved in this browser</p>
                 <h3 id="profile-summary-title" tabindex="-1">Your student profile</h3>
-                <p>This profile is ready for future coach features. It does not currently rank or assess opportunities.</p>
+                <p>This profile can generate personalized relevance rankings. Eligibility guidance remains separate and must be verified at the source.</p>
               </div>
               <div class="profile-completeness">
                 <label for="profile-summary-progress">Profile completeness</label>
@@ -803,6 +803,92 @@
             </div>
           </section>
         </div>
+
+        <section class="container matching-workspace" id="matching-workspace" aria-labelledby="matching-title">
+          <div class="matching-workspace__heading">
+            <div>
+              <p class="section-kicker">Transparent recommendations</p>
+              <h2 id="matching-title">Your personalized opportunity matches</h2>
+            </div>
+            <p>
+              A profile-match percentage measures represented preferences that align with your profile. It is not an
+              eligibility, admission, selection, or funding probability.
+            </p>
+          </div>
+
+          <p class="profile-message" id="matching-status" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+
+          <div class="matching-state matching-profile-required" id="matching-profile-required">
+            <div>
+              <h3 id="matching-profile-required-title" tabindex="-1">Create a profile to generate personalized matches.</h3>
+              <p>Your ordinary opportunity directory remains available without a profile.</p>
+            </div>
+            <div class="matching-state__actions">
+              <button
+                class="button button--primary"
+                type="button"
+                data-create-profile
+                data-create-label="Create my student profile"
+                data-edit-label="Edit my student profile"
+                aria-controls="profile-editor"
+                aria-expanded="false"
+              >
+                <span data-profile-cta-label>Create my student profile</span>
+              </button>
+              <a class="button button--secondary" href="#opportunities">Browse the directory</a>
+            </div>
+          </div>
+
+          <div class="matching-state matching-ready" id="matching-ready" hidden>
+            <div class="matching-profile-context">
+              <div>
+                <span class="panel-label">Profile used for matching</span>
+                <h3>Your saved student profile</h3>
+                <p id="matching-profile-context-copy"></p>
+              </div>
+              <dl id="matching-profile-context"></dl>
+            </div>
+            <div class="matching-ready__actions">
+              <button class="button button--primary button--large" id="find-matches" type="button" aria-controls="matching-results" disabled>
+                Find my matches
+                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"></path></svg>
+              </button>
+              <button class="button button--secondary" id="matching-edit-profile" type="button" aria-controls="profile-editor">Edit profile</button>
+              <span id="matching-data-status">Loading verified opportunities…</span>
+            </div>
+          </div>
+
+          <section class="matching-results" id="matching-results" aria-labelledby="matching-results-title" hidden>
+            <div class="matching-results__topline">
+              <div>
+                <span class="personalized-mode"><i aria-hidden="true"></i> Personalized ranking active</span>
+                <h3 id="matching-results-title" tabindex="-1">Ranked opportunities for your profile</h3>
+                <p id="matching-results-summary">No opportunities compared yet.</p>
+              </div>
+              <a class="button button--secondary" id="return-directory-order" href="#opportunities">
+                Browse normal directory order
+              </a>
+            </div>
+
+            <fieldset class="matching-view-controls">
+              <legend>Choose which personalized results to view</legend>
+              <div>
+                <button type="button" data-match-view="best" aria-pressed="true">Best matches</button>
+                <button type="button" data-match-view="all" aria-pressed="false">All opportunities</button>
+                <button type="button" data-match-view="actionable" aria-pressed="false">Currently actionable</button>
+                <button type="button" data-match-view="closed" aria-pressed="false">Closed opportunities</button>
+              </div>
+            </fieldset>
+
+            <p class="matching-result-count" id="matching-result-count" role="status" aria-live="polite"></p>
+            <div class="matching-grid" id="matching-grid" role="list" aria-labelledby="matching-results-title"></div>
+
+            <div class="matching-empty" id="matching-empty-view" hidden>
+              <h4>No opportunities are in this view.</h4>
+              <p>Choose another results view. Personalized matching never removes records from the normal directory.</p>
+            </div>
+          </section>
+        </section>
 
         <dialog
           class="confirm-dialog"
@@ -874,6 +960,28 @@
           </span>
         </div>
         <p class="card__description"></p>
+        <section class="card__match-guidance" aria-label="Personalized matching and eligibility guidance" hidden>
+          <div class="card__match-heading">
+            <div>
+              <strong class="card__match-score"></strong>
+              <span class="card__match-confidence"></span>
+            </div>
+            <span class="card__eligibility-status"></span>
+          </div>
+          <div class="card__match-reasons-wrap">
+            <h4>What shaped this ranking</h4>
+            <ul class="card__match-reasons"></ul>
+          </div>
+          <div class="card__eligibility-guidance">
+            <h4>Eligibility guidance</h4>
+            <div class="card__eligibility-details"></div>
+            <p class="card__source-reminder">Check full current requirements at the official source before applying.</p>
+          </div>
+          <details class="card__score-disclosure">
+            <summary>How this score was calculated</summary>
+            <div class="card__score-details"></div>
+          </details>
+        </section>
         <dl class="card__details">
           <div class="card__detail card__detail--wide">
             <dt>

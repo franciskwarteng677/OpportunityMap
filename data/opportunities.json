@@ -1,6 +1,7 @@
 [
   {
     "id": "opp-001",
+    "schemaVersion": 2,
     "title": "Rhodes Scholarship for West Africa",
     "category": "Scholarships",
     "country": "West Africa",
@@ -16,10 +17,43 @@
     "sourceName": "Rhodes Trust",
     "officialUrl": "https://www.rhodeshouse.ox.ac.uk/scholarships/applications/west-africa/",
     "lastVerified": "2026-07-09",
-    "verified": true
+    "verified": true,
+    "matching": {
+      "schemaVersion": 1,
+      "educationStages": ["masters", "doctoral"],
+      "fields": [],
+      "categories": ["scholarships"],
+      "eligibleNationalities": [],
+      "eligibleResidencies": [],
+      "geographicReach": ["west_africa"],
+      "fundingPreferences": ["fully_funded", "some_funding", "any"],
+      "mobilityRequired": null,
+      "experienceLevels": [],
+      "minAge": null,
+      "maxAge": null,
+      "goalKeywords": ["postgraduate", "scholarship", "oxford"],
+      "criteriaSources": {
+        "educationStages": ["studentLevel", "field"],
+        "categories": ["category"],
+        "geographicReach": ["country", "region", "eligibleFor"],
+        "fundingPreferences": ["fundingType", "description"],
+        "goalKeywords": ["title", "field", "description"]
+      }
+    },
+    "eligibilityGuidance": {
+      "schemaVersion": 1,
+      "representedRequirements": [],
+      "unrepresentedRequirements": [
+        {
+          "description": "Constituency connection, current age, academic, residency, and course criteria are not fully structured in the directory.",
+          "sourceField": "eligibleFor"
+        }
+      ]
+    }
   },
   {
     "id": "opp-002",
+    "schemaVersion": 2,
     "title": "Breakthrough Junior Challenge",
     "category": "Competitions",
     "country": "Global",
@@ -35,10 +69,64 @@
     "sourceName": "Breakthrough Prize Foundation",
     "officialUrl": "https://breakthroughjuniorchallenge.org/",
     "lastVerified": "2026-07-09",
-    "verified": true
+    "verified": true,
+    "matching": {
+      "schemaVersion": 1,
+      "educationStages": ["secondary_school"],
+      "fields": ["mathematics_physical_sciences", "health_life_sciences"],
+      "categories": ["competitions"],
+      "eligibleNationalities": [],
+      "eligibleResidencies": [],
+      "geographicReach": ["global"],
+      "fundingPreferences": ["some_funding", "any"],
+      "mobilityRequired": null,
+      "experienceLevels": [],
+      "minAge": 13,
+      "maxAge": 18,
+      "goalKeywords": ["physics", "mathematics", "life sciences", "science communication", "video"],
+      "criteriaSources": {
+        "educationStages": ["studentLevel", "eligibleFor"],
+        "fields": ["field", "description"],
+        "categories": ["category"],
+        "geographicReach": ["country", "eligibleFor"],
+        "fundingPreferences": ["fundingType"],
+        "minAge": ["studentLevel", "eligibleFor"],
+        "maxAge": ["studentLevel", "eligibleFor"],
+        "goalKeywords": ["field", "description"]
+      }
+    },
+    "eligibilityGuidance": {
+      "schemaVersion": 1,
+      "representedRequirements": [
+        {
+          "id": "age-range",
+          "type": "age_range",
+          "verified": true,
+          "minAge": 13,
+          "maxAge": 18,
+          "description": "Applicants must be aged 13–18 under the competition's published age dates.",
+          "sourceField": "eligibleFor"
+        },
+        {
+          "id": "education-stage",
+          "type": "education_stage",
+          "verified": true,
+          "allowedValues": ["secondary_school"],
+          "description": "The opportunity is intended for secondary-school students.",
+          "sourceField": "studentLevel"
+        }
+      ],
+      "unrepresentedRequirements": [
+        {
+          "description": "Published age-date details and submission requirements still need to be checked.",
+          "sourceField": "eligibleFor"
+        }
+      ]
+    }
   },
   {
     "id": "opp-003",
+    "schemaVersion": 2,
     "title": "WIPO Young Experts Program",
     "category": "Fellowships",
     "country": "Global",
@@ -54,10 +142,63 @@
     "sourceName": "World Intellectual Property Organization (WIPO)",
     "officialUrl": "https://www.wipo.int/en/web/working-at-wipo/young-experts-program",
     "lastVerified": "2026-07-09",
-    "verified": true
+    "verified": true,
+    "matching": {
+      "schemaVersion": 1,
+      "educationStages": ["early_career"],
+      "fields": ["business_entrepreneurship", "law_policy"],
+      "categories": ["fellowships"],
+      "eligibleNationalities": [],
+      "eligibleResidencies": [],
+      "geographicReach": ["global"],
+      "fundingPreferences": ["some_funding", "any"],
+      "mobilityRequired": null,
+      "experienceLevels": ["one_to_two_years", "three_to_five_years", "over_five_years"],
+      "minAge": null,
+      "maxAge": 35,
+      "goalKeywords": ["innovation", "intellectual property", "policy", "professional development", "wipo"],
+      "criteriaSources": {
+        "educationStages": ["studentLevel", "eligibleFor"],
+        "fields": ["field"],
+        "categories": ["category"],
+        "geographicReach": ["country"],
+        "fundingPreferences": ["fundingType"],
+        "experienceLevels": ["eligibleFor"],
+        "maxAge": ["eligibleFor"],
+        "goalKeywords": ["title", "field", "description"]
+      }
+    },
+    "eligibilityGuidance": {
+      "schemaVersion": 1,
+      "representedRequirements": [
+        {
+          "id": "maximum-age",
+          "type": "age_range",
+          "verified": true,
+          "maxAge": 35,
+          "description": "Applicants must be aged 35 or younger.",
+          "sourceField": "eligibleFor"
+        },
+        {
+          "id": "minimum-experience",
+          "type": "minimum_experience",
+          "verified": true,
+          "minimumYears": 2,
+          "description": "Applicants need at least two years of relevant experience.",
+          "sourceField": "eligibleFor"
+        }
+      ],
+      "unrepresentedRequirements": [
+        {
+          "description": "The university-degree requirement and other current program requirements are not captured by the profile.",
+          "sourceField": "eligibleFor"
+        }
+      ]
+    }
   },
   {
     "id": "opp-004",
+    "schemaVersion": 2,
     "title": "Africa Prize for Engineering Innovation",
     "category": "Competitions",
     "country": "Sub-Saharan Africa",
@@ -73,10 +214,44 @@
     "sourceName": "Royal Academy of Engineering",
     "officialUrl": "https://africaprize.raeng.org.uk/about-the-prize/how-to-apply",
     "lastVerified": "2026-07-13",
-    "verified": true
+    "verified": true,
+    "matching": {
+      "schemaVersion": 1,
+      "educationStages": ["early_career"],
+      "fields": ["engineering", "business_entrepreneurship"],
+      "categories": ["competitions"],
+      "eligibleNationalities": [],
+      "eligibleResidencies": [],
+      "geographicReach": ["sub_saharan_africa"],
+      "fundingPreferences": ["some_funding", "any"],
+      "mobilityRequired": null,
+      "experienceLevels": [],
+      "minAge": null,
+      "maxAge": null,
+      "goalKeywords": ["engineering", "innovation", "entrepreneurship", "commercialisation", "mentoring"],
+      "criteriaSources": {
+        "educationStages": ["studentLevel"],
+        "fields": ["field"],
+        "categories": ["category"],
+        "geographicReach": ["country", "eligibleFor"],
+        "fundingPreferences": ["fundingType", "description"],
+        "goalKeywords": ["field", "description"]
+      }
+    },
+    "eligibilityGuidance": {
+      "schemaVersion": 1,
+      "representedRequirements": [],
+      "unrepresentedRequirements": [
+        {
+          "description": "Being based in sub-Saharan Africa, developing an engineering-led innovation, and meeting current-cycle rules require source verification.",
+          "sourceField": "eligibleFor"
+        }
+      ]
+    }
   },
   {
     "id": "opp-005",
+    "schemaVersion": 2,
     "title": "KAUST Visiting Student Research Program",
     "category": "Research Programs",
     "country": "Saudi Arabia",
@@ -92,10 +267,43 @@
     "sourceName": "King Abdullah University of Science and Technology (KAUST)",
     "officialUrl": "https://admissions.kaust.edu.sa/study/internships",
     "lastVerified": "2026-07-09",
-    "verified": true
+    "verified": true,
+    "matching": {
+      "schemaVersion": 1,
+      "educationStages": ["undergraduate", "masters"],
+      "fields": ["computer_science_ai", "engineering", "mathematics_physical_sciences", "health_life_sciences"],
+      "categories": ["research_programs"],
+      "eligibleNationalities": [],
+      "eligibleResidencies": [],
+      "geographicReach": [],
+      "fundingPreferences": ["fully_funded", "some_funding", "any"],
+      "mobilityRequired": null,
+      "experienceLevels": [],
+      "minAge": null,
+      "maxAge": null,
+      "goalKeywords": ["research", "science", "technology", "engineering", "mathematics", "stem"],
+      "criteriaSources": {
+        "educationStages": ["studentLevel", "eligibleFor"],
+        "fields": ["field"],
+        "categories": ["category"],
+        "fundingPreferences": ["fundingType"],
+        "goalKeywords": ["field", "description"]
+      }
+    },
+    "eligibilityGuidance": {
+      "schemaVersion": 1,
+      "representedRequirements": [],
+      "unrepresentedRequirements": [
+        {
+          "description": "Undergraduate study year and project-specific requirements are not captured by the profile.",
+          "sourceField": "eligibleFor"
+        }
+      ]
+    }
   },
   {
     "id": "opp-006",
+    "schemaVersion": 2,
     "title": "UNICEF Internship Programme",
     "category": "Internships",
     "country": "Global",
@@ -111,10 +319,43 @@
     "sourceName": "UNICEF Careers",
     "officialUrl": "https://www.unicef.org/careers/internships",
     "lastVerified": "2026-07-09",
-    "verified": true
+    "verified": true,
+    "matching": {
+      "schemaVersion": 1,
+      "educationStages": ["undergraduate", "masters", "doctoral", "recent_graduate"],
+      "fields": [],
+      "categories": ["internships"],
+      "eligibleNationalities": [],
+      "eligibleResidencies": [],
+      "geographicReach": ["global"],
+      "fundingPreferences": ["some_funding", "any"],
+      "mobilityRequired": null,
+      "experienceLevels": [],
+      "minAge": null,
+      "maxAge": null,
+      "goalKeywords": ["internship", "professional", "career", "unicef"],
+      "criteriaSources": {
+        "educationStages": ["studentLevel", "eligibleFor"],
+        "categories": ["category"],
+        "geographicReach": ["country", "description"],
+        "fundingPreferences": ["fundingType"],
+        "goalKeywords": ["title", "description", "sourceName"]
+      }
+    },
+    "eligibilityGuidance": {
+      "schemaVersion": 1,
+      "representedRequirements": [],
+      "unrepresentedRequirements": [
+        {
+          "description": "Enrollment or graduation within the past two years and vacancy-specific requirements need source verification.",
+          "sourceField": "eligibleFor"
+        }
+      ]
+    }
   },
   {
     "id": "opp-007",
+    "schemaVersion": 2,
     "title": "AIMS AI for Science Master's Scholarship",
     "category": "Scholarships",
     "country": "South Africa",
@@ -130,10 +371,43 @@
     "sourceName": "AIMS South Africa",
     "officialUrl": "https://ai.aims.ac.za/apply",
     "lastVerified": "2026-07-09",
-    "verified": true
+    "verified": true,
+    "matching": {
+      "schemaVersion": 1,
+      "educationStages": [],
+      "fields": ["computer_science_ai", "mathematics_physical_sciences"],
+      "categories": ["scholarships"],
+      "eligibleNationalities": [],
+      "eligibleResidencies": [],
+      "geographicReach": ["africa_wide"],
+      "fundingPreferences": ["fully_funded", "some_funding", "any"],
+      "mobilityRequired": null,
+      "experienceLevels": [],
+      "minAge": null,
+      "maxAge": null,
+      "goalKeywords": ["artificial intelligence", "ai", "machine learning", "mathematical sciences", "scientific research"],
+      "criteriaSources": {
+        "fields": ["field", "description"],
+        "categories": ["category"],
+        "geographicReach": ["eligibleFor", "region"],
+        "fundingPreferences": ["fundingType", "description"],
+        "goalKeywords": ["title", "field", "description"]
+      }
+    },
+    "eligibilityGuidance": {
+      "schemaVersion": 1,
+      "representedRequirements": [],
+      "unrepresentedRequirements": [
+        {
+          "description": "The eligible quantitative undergraduate qualification is not captured by the current profile.",
+          "sourceField": "eligibleFor"
+        }
+      ]
+    }
   },
   {
     "id": "opp-008",
+    "schemaVersion": 2,
     "title": "African Union Digital & Innovation Fellowship",
     "category": "Fellowships",
     "country": "African Union Member States",
@@ -149,10 +423,54 @@
     "sourceName": "African Union Commission",
     "officialUrl": "https://au.int/en/pressreleases/20260218/au-call-applications-3rd-cohort-digital-innovation-fellowship",
     "lastVerified": "2026-07-13",
-    "verified": true
+    "verified": true,
+    "matching": {
+      "schemaVersion": 1,
+      "educationStages": ["early_career", "mid_career"],
+      "fields": ["computer_science_ai"],
+      "categories": ["fellowships"],
+      "eligibleNationalities": [],
+      "eligibleResidencies": [],
+      "geographicReach": ["africa_wide"],
+      "fundingPreferences": ["some_funding", "any"],
+      "mobilityRequired": null,
+      "experienceLevels": [],
+      "minAge": null,
+      "maxAge": 34,
+      "goalKeywords": ["technology", "data", "digital transformation", "fellowship", "african union"],
+      "criteriaSources": {
+        "educationStages": ["studentLevel"],
+        "fields": ["field"],
+        "categories": ["category"],
+        "geographicReach": ["country", "region", "eligibleFor"],
+        "fundingPreferences": ["fundingType"],
+        "maxAge": ["eligibleFor"],
+        "goalKeywords": ["title", "field", "description"]
+      }
+    },
+    "eligibilityGuidance": {
+      "schemaVersion": 1,
+      "representedRequirements": [
+        {
+          "id": "maximum-age",
+          "type": "age_range",
+          "verified": true,
+          "maxAge": 34,
+          "description": "Applicants must be under 35.",
+          "sourceField": "eligibleFor"
+        }
+      ],
+      "unrepresentedRequirements": [
+        {
+          "description": "African Union Member State citizenship, the relevant technical degree, and current-cohort rules need source verification.",
+          "sourceField": "eligibleFor"
+        }
+      ]
+    }
   },
   {
     "id": "opp-009",
+    "schemaVersion": 2,
     "title": "Yale Young African Scholars",
     "category": "Summer Programs",
     "country": "Kenya / Online",
@@ -168,6 +486,59 @@
     "sourceName": "Yale Young African Scholars",
     "officialUrl": "https://africanscholars.yale.edu/",
     "lastVerified": "2026-07-09",
-    "verified": true
+    "verified": true,
+    "matching": {
+      "schemaVersion": 1,
+      "educationStages": ["secondary_school"],
+      "fields": ["interdisciplinary_other"],
+      "categories": ["summer_programs"],
+      "eligibleNationalities": [],
+      "eligibleResidencies": [],
+      "geographicReach": ["africa_wide"],
+      "fundingPreferences": ["some_funding", "any"],
+      "mobilityRequired": null,
+      "experienceLevels": [],
+      "minAge": 14,
+      "maxAge": 18,
+      "goalKeywords": ["college preparation", "leadership", "academic enrichment", "secondary school"],
+      "criteriaSources": {
+        "educationStages": ["studentLevel", "eligibleFor"],
+        "fields": ["field"],
+        "categories": ["category"],
+        "geographicReach": ["eligibleFor", "region"],
+        "fundingPreferences": ["fundingType", "description"],
+        "minAge": ["eligibleFor"],
+        "maxAge": ["eligibleFor"],
+        "goalKeywords": ["field", "description"]
+      }
+    },
+    "eligibilityGuidance": {
+      "schemaVersion": 1,
+      "representedRequirements": [
+        {
+          "id": "age-range",
+          "type": "age_range",
+          "verified": true,
+          "minAge": 14,
+          "maxAge": 18,
+          "description": "Applicants must be aged 14–18.",
+          "sourceField": "eligibleFor"
+        },
+        {
+          "id": "education-stage",
+          "type": "education_stage",
+          "verified": true,
+          "allowedValues": ["secondary_school"],
+          "description": "Applicants must attend secondary school in Africa.",
+          "sourceField": "eligibleFor"
+        }
+      ],
+      "unrepresentedRequirements": [
+        {
+          "description": "Citizenship, permanent-residency or refugee routes, school attendance in Africa, and grade-level rules need source verification.",
+          "sourceField": "eligibleFor"
+        }
+      ]
+    }
   }
 ]

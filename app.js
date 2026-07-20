@@ -1,5 +1,8 @@
 "use strict";
 
+import { validateEligibilityGuidance } from "./js/eligibility.js";
+import { buildMatchExplanations, validateMatchingMetadata } from "./js/matching.js";
+import { initialiseMatchingExperience } from "./js/matches-ui.js";
 import { initialiseProfileExperience } from "./js/profile.js";
 
 const DATA_URL = "./data/opportunities.json";
@@ -53,6 +56,7 @@ const elements = {
 
 let opportunities = [];
 let activeCategory = "All";
+let matchingExperience = null;
 
 function normalise(value) {
   return String(value ?? "")
@@ -112,6 +116,10 @@ function assertValidData(data) {
       throw new Error(`Opportunity ${index + 1} has an invalid verified value.`);
     }
 
+    if (item.schemaVersion !== 2) {
+      throw new Error(`Opportunity ${index + 1} must use schemaVersion 2.`);
+    }
+
     const textFields = REQUIRED_FIELDS.filter((field) => field !== "verified");
     const invalidTextFields = textFields.filter(
       (field) => typeof item[field] !== "string" || !item[field].trim(),
@@ -134,6 +142,15 @@ function assertValidData(data) {
     const officialUrl = new URL(item.officialUrl);
     if (officialUrl.protocol !== "https:") {
       throw new Error(`Opportunity ${index + 1} must use a secure official URL.`);
+    }
+
+    const metadataErrors = [
+      ...validateMatchingMetadata(item),
+      ...validateEligibilityGuidance(item),
+    ];
+
+    if (metadataErrors.length) {
+      throw new Error(`Opportunity ${index + 1} has invalid coaching metadata: ${metadataErrors.join("; ")}.`);
     }
   });
 
@@ -158,6 +175,10 @@ function addOptions(select, values) {
 }
 
 function populateFilters(data) {
+  [elements.country, elements.field, elements.status].forEach((select) => {
+    while (select.options.length > 1) select.remove(1);
+  });
+
   addOptions(elements.country, uniqueSorted(data.map((item) => item.country)));
   addOptions(elements.field, uniqueSorted(data.map((item) => item.field)));
 
@@ -220,7 +241,94 @@ function syncFiltersToUrl() {
   }
 }
 
-function createCard(opportunity) {
+function appendGuidanceList(container, items, fallback) {
+  const fragment = document.createDocumentFragment();
+  const values = items.length ? items : [fallback];
+
+  values.forEach((value) => {
+    const item = document.createElement("li");
+    item.textContent = value;
+    fragment.append(item);
+  });
+
+  container.replaceChildren(fragment);
+}
+
+function appendEligibilityGroup(container, headingText, items, className) {
+  if (!items.length) return;
+  const section = document.createElement("section");
+  const heading = document.createElement("h5");
+  const list = document.createElement("ul");
+  heading.textContent = headingText;
+  section.className = className;
+
+  items.forEach((text) => {
+    const item = document.createElement("li");
+    item.textContent = text;
+    list.append(item);
+  });
+
+  section.append(heading, list);
+  container.append(section);
+}
+
+function populateMatchGuidance(card, guidance) {
+  const { match, eligibility } = guidance;
+  const wrapper = card.querySelector(".card__match-guidance");
+  const eligibilityStatus = card.querySelector(".card__eligibility-status");
+  const eligibilityDetails = card.querySelector(".card__eligibility-details");
+  const scoreDetails = card.querySelector(".card__score-details");
+  const statusLabels = {
+    "confirmed-fit": "Represented requirements match",
+    "known-conflict": "Known requirement conflict",
+    "information-needed": "More information needed",
+    "verify-at-source": "Potential fit — verify eligibility",
+  };
+
+  wrapper.hidden = false;
+  card.dataset.matchScore = String(match.score);
+  card.querySelector(".card__match-score").textContent = `${match.score}% profile match`;
+  card.querySelector(".card__match-confidence").textContent =
+    `Based on ${match.confidence.comparedFactors} of ${match.confidence.availableFactors} comparable factors`;
+  eligibilityStatus.dataset.eligibilityStatus = eligibility.status;
+  eligibilityStatus.textContent = statusLabels[eligibility.status] || "Check eligibility at source";
+
+  appendGuidanceList(
+    card.querySelector(".card__match-reasons"),
+    buildMatchExplanations(match),
+    "No represented preference produced a positive match reason; review the calculation and official details.",
+  );
+
+  eligibilityDetails.replaceChildren();
+  appendEligibilityGroup(eligibilityDetails, "Represented checks that match", eligibility.confirmedChecks, "is-confirmed");
+  appendEligibilityGroup(eligibilityDetails, "Known conflicts", eligibility.conflicts, "has-conflict");
+  appendEligibilityGroup(eligibilityDetails, "Information needed", eligibility.informationNeeded, "needs-information");
+  appendEligibilityGroup(
+    eligibilityDetails,
+    "Requirements to verify at the source",
+    eligibility.sourceVerificationNeeded,
+    "needs-source",
+  );
+
+  const formula = document.createElement("p");
+  const breakdown = document.createElement("ul");
+  formula.textContent = match.comparedWeight
+    ? `${match.earnedWeight} matched weight points out of ${match.comparedWeight} compared points were normalized to ${match.score}%. Unknown or unavailable factors were excluded.`
+    : "No represented factors could be compared, so the profile-match score is 0%. Unknown factors were excluded.";
+
+  match.scoreBreakdown.forEach((factor) => {
+    const item = document.createElement("li");
+    const pointText = ["matched", "mismatched"].includes(factor.state)
+      ? `${factor.earnedWeight} of ${factor.weight} points`
+      : "excluded from scoring";
+    item.textContent = `${factor.label}: ${pointText}. ${factor.message}`;
+    breakdown.append(item);
+  });
+
+  scoreDetails.replaceChildren(formula, breakdown);
+}
+
+function createCard(opportunity, guidance = null) {
   const card = elements.template.content.firstElementChild.cloneNode(true);
   const deadline = formatDeadline(opportunity.deadline);
   const lastVerified = formatDeadline(opportunity.lastVerified);
@@ -267,6 +375,8 @@ function createCard(opportunity) {
     "aria-label",
     `View official source for ${opportunity.title} (opens in a new tab)`,
   );
+
+  if (guidance) populateMatchGuidance(card, guidance);
 
   return card;
 }
@@ -412,6 +522,7 @@ function showLoadError(error) {
   elements.empty.hidden = true;
   elements.error.hidden = false;
   elements.resultCount.textContent = "Directory unavailable";
+  matchingExperience?.setDataError();
 
   if (window.location.protocol === "file:") {
     elements.errorMessage.textContent =
@@ -441,6 +552,7 @@ async function loadOpportunities() {
     setLoading(false);
     elements.grid.hidden = false;
     applyFilters();
+    matchingExperience?.setOpportunities(opportunities);
   } catch (error) {
     showLoadError(error);
   }
@@ -487,7 +599,12 @@ function bindEvents() {
 function initialise() {
   elements.currentYear.textContent = new Date().getFullYear();
   bindEvents();
-  initialiseProfileExperience();
+  const profileExperience = initialiseProfileExperience();
+  matchingExperience = initialiseMatchingExperience({
+    getProfile: profileExperience.getProfile,
+    editProfile: () => profileExperience.showForm(profileExperience.getProfile()),
+    createOpportunityCard: createCard,
+  });
   loadOpportunities();
 }
 
