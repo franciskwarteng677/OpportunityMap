@@ -2,7 +2,7 @@
 
 OpportunityMap is a static scholarship and opportunity finder designed for Ghanaian and African students. It brings scholarships, competitions, fellowships, research programmes, summer programmes, internships, and other academic pathways into one searchable, student-friendly directory.
 
-This repository contains the first professional front-end version of the project. It is intentionally built without a framework, backend, database, or sign-in system so the discovery experience and data model can be tested before the platform grows.
+This repository contains the professional directory plus the first OpenAI Build Week phase of **OpportunityMap AI Coach**. It remains intentionally framework-free, with no backend, database, account system, or API integration. Students can browse the full directory without creating a profile.
 
 ## The problem
 
@@ -42,8 +42,14 @@ The interface uses careful language and direct official links. A “verified sou
 - Per-card source name, verification date, student level, funding type, and application context
 - Data-driven Opportunity Distribution panel with a lightweight Africa regional view
 - “How OpportunityMap Works” guidance
-- Clearly labelled AI matching preview for a future release
+- Real OpportunityMap AI Coach introduction with honest Phase 1 scope
 - Accessible landmarks, labels, focus states, status announcements, and reduced-motion support
+- Accessible student profile creation, editing, summary, completeness, and clearing
+- Canonical internal profile values for future explainable personalization
+- Private, no-account profile persistence in the current browser only
+- Defensive handling for missing, corrupted, unsupported, or unwritable browser storage
+
+Opportunity matching, eligibility scoring, saved opportunities, action plans, and API features are not active in this phase. See `BUILD_WEEK_BASELINE.md` for the exact pre-hackathon boundary.
 
 ## Technology stack
 
@@ -51,6 +57,8 @@ The interface uses careful language and direct official links. A “verified sou
 - CSS3
 - Vanilla JavaScript
 - JSON
+- Browser `localStorage`
+- Node.js built-in test runner for development tests only
 
 There are no runtime dependencies, build tools, frameworks, backend services, or database requirements.
 
@@ -58,11 +66,22 @@ There are no runtime dependencies, build tools, frameworks, backend services, or
 
 ```text
 OpportunityMap/
+├── BUILD_WEEK_BASELINE.md
 ├── index.html
 ├── styles.css
 ├── app.js
+├── js/
+│   ├── config.js
+│   ├── profile.js
+│   └── storage.js
 ├── data/
 │   └── opportunities.json
+├── tests/
+│   ├── config.test.js
+│   ├── markup.test.js
+│   ├── profile.test.js
+│   └── storage.test.js
+├── package.json
 └── README.md
 ```
 
@@ -139,17 +158,19 @@ OpportunityMap is a static site and requires no build command.
 
 The same project can also be hosted on GitHub Pages or another static hosting service.
 
-## Future AI features
+## OpportunityMap AI Coach profile foundation
 
-The AI matching panel is a product direction, not an active feature in this version. A later release could let a student create a profile using information such as:
+Students can now create a local profile containing citizenship, residence, optional age, education stage, interests, preferred categories, a broad goal, funding and mobility preferences, and experience level. Stable canonical values are stored under the versioned key `opportunityMapCoachState`.
 
-- age and education stage;
-- country and mobility preferences;
-- subjects and fields of interest;
-- skills and previous experience; and
-- career or study goals.
+Profile data stays in the current browser. It is not uploaded, synchronized, or backed up, and it may be lost when browser data is cleared. No account is required. Students should not enter contact details, identification numbers, grades, financial data, or other sensitive information.
 
-An explainable matching layer could then use fields such as `studentLevel`, `fundingType`, and `applicationType` to rank suitable opportunities and show why each result may be relevant. This should be designed with consent, data minimisation, transparent controls, and a non-AI browsing path so students can still search the full directory themselves.
+This phase does not match or rank opportunities and does not make eligibility decisions. A later explainable layer can use the profile only after the verified opportunity data has suitable structured criteria. Manual browsing remains available at all times.
+
+Run the focused development tests with:
+
+```powershell
+npm test
+```
 
 ## Research and analytics component
 
@@ -171,7 +192,7 @@ Those analytics should clearly distinguish directory coverage from the real-worl
 The JSON dataset is appropriate for the first version. A fuller platform can later add:
 
 - a database and editorial content-management workflow;
-- user accounts and student profiles;
+- optional account-based profile synchronization, if later justified;
 - saved opportunities and deadline reminders;
 - per-record verification history and automated stale-data checks;
 - personalised, explainable AI matching;

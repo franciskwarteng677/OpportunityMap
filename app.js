@@ -1,5 +1,7 @@
 "use strict";
 
+import { initialiseProfileExperience } from "./js/profile.js";
+
 const DATA_URL = "./data/opportunities.json";
 const REQUIRED_FIELDS = [
   "id",
@@ -485,9 +487,7 @@ function bindEvents() {
 function initialise() {
   elements.currentYear.textContent = new Date().getFullYear();
   bindEvents();
-
-  // Future AI recommendation hook: a student profile and explainable ranking
-  // layer can be introduced here without changing the JSON-driven card renderer.
+  initialiseProfileExperience();
   loadOpportunities();
 }
 
