@@ -10,7 +10,7 @@
     <meta name="theme-color" content="#0b2b2a">
     <title>OpportunityMap — Find opportunities built for your next step</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="app.js" defer></script>
+    <script type="module" src="app.js"></script>
   </head>
 
   <body>
@@ -27,6 +27,8 @@
 
         <nav class="primary-nav" aria-label="Primary navigation">
           <a href="#opportunities">Explore</a>
+          <a href="#ai-coach">AI Coach</a>
+          <a href="#my-applications">My Applications</a>
           <a href="#distribution">Distribution</a>
           <a href="#how-it-works">How it works</a>
         </nav>
@@ -42,6 +44,8 @@
           </summary>
           <nav aria-label="Mobile navigation">
             <a href="#opportunities">Explore opportunities</a>
+            <a href="#ai-coach">OpportunityMap AI Coach</a>
+            <a href="#my-applications">My Applications</a>
             <a href="#distribution">Opportunity distribution</a>
             <a href="#how-it-works">How it works</a>
             <a class="mobile-nav__cta" href="#opportunities">Browse the directory</a>
@@ -481,46 +485,585 @@
         </div>
       </section>
 
-      <section class="ai-section" id="ai-matching" aria-labelledby="ai-title">
-        <div class="container ai-panel">
-          <div class="ai-panel__content">
+      <section class="coach-section" id="ai-coach" aria-labelledby="coach-title">
+        <div class="container coach-intro">
+          <div class="coach-intro__content">
             <p class="eyebrow eyebrow--light">
               <span class="eyebrow__dot" aria-hidden="true"></span>
-              AI Matching · Coming Soon
+              OpportunityMap AI Coach
             </p>
-            <h2 id="ai-title">A more personal route through the opportunity landscape.</h2>
+            <h2 id="coach-title">Start with a profile built around your journey.</h2>
             <p>
-              A future version will help students surface relevant opportunities based on their age, country,
-              interests, education stage, and career goals—with clear controls over the profile information they share.
+              Create a student profile, keep it locally in this browser, and use transparent matching to compare
+              your interests and preferences with the nine verified opportunities.
             </p>
-            <div class="ai-factors" aria-label="Planned matching factors">
-              <span>Age & stage</span>
-              <span>Country</span>
-              <span>Interests</span>
-              <span>Career goals</span>
+
+            <div class="coach-intro__actions">
+              <button
+                class="button button--primary button--large"
+                type="button"
+                data-create-profile
+                data-create-label="Create my student profile"
+                data-edit-label="Edit my student profile"
+                aria-controls="profile-editor"
+                aria-expanded="false"
+              >
+                <span data-profile-cta-label>Create my student profile</span>
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M4 10h12M11 5l5 5-5 5"></path>
+                </svg>
+              </button>
+              <a class="coach-intro__browse" href="#opportunities">Browse without a profile</a>
             </div>
-            <p class="ai-panel__note">
-              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"></path><path d="M10 9v5M10 6.2v.1"></path></svg>
-              Matching is a planned feature and is not active in this version.
+
+            <p class="coach-intro__note">
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M10 2.5 4.5 5v4c0 3.6 2.2 6.3 5.5 8 3.3-1.7 5.5-4.4 5.5-8V5L10 2.5Z"></path>
+                <path d="m7.4 9.8 1.7 1.7 3.6-3.8"></path>
+              </svg>
+              No account is required. Your profile stays only in this browser.
             </p>
           </div>
 
-          <div class="match-preview" aria-hidden="true">
-            <div class="match-preview__orb"><span></span><i></i></div>
-            <div class="match-preview__card match-preview__card--top">
-              <span class="match-preview__spark">
-                <svg viewBox="0 0 24 24"><path d="m12 2 1.6 6.4L20 10l-6.4 1.6L12 18l-1.6-6.4L4 10l6.4-1.6L12 2Z"></path></svg>
+          <div class="coach-intro__visual" aria-hidden="true">
+            <div class="coach-profile-card">
+              <span class="coach-profile-card__icon">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="8" r="3"></circle>
+                  <path d="M5 20c.7-4 3.2-6.4 7-6.4s6.3 2.4 7 6.4"></path>
+                </svg>
               </span>
-              <span><small>Future match</small><strong>Research & technology</strong></span>
-              <b>92%</b>
+              <span><small>Profile foundation</small><strong>Your goals, interests, and stage</strong></span>
+              <span class="coach-profile-card__status"><i></i> Local only</span>
             </div>
-            <div class="match-preview__card match-preview__card--bottom">
-              <span class="mini-bars"><i></i><i></i><i></i></span>
-              <span><small>Profile signals</small><strong>Relevant, explainable results</strong></span>
+
+            <ul class="coach-foundation-list">
+              <li><span>01</span><strong>You choose what to share</strong></li>
+              <li><span>02</span><strong>Saved on this device</strong></li>
+              <li><span>03</span><strong>Edit or clear at any time</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="container profile-workspace" id="profile-workspace" hidden>
+          <p class="profile-message" id="profile-status" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+
+          <section class="profile-view profile-empty" id="profile-empty-view" aria-labelledby="profile-empty-title" hidden>
+            <div>
+              <p class="section-kicker">Your profile</p>
+              <h3 id="profile-empty-title" tabindex="-1">Your browser profile is empty.</h3>
+              <p>Create a profile when you are ready, or keep using the full opportunity directory without one.</p>
+            </div>
+            <div class="profile-empty__actions">
+              <button
+                class="button button--secondary"
+                type="button"
+                data-create-profile
+                data-create-label="Create profile"
+                data-edit-label="Edit profile"
+                aria-controls="profile-editor"
+                aria-expanded="false"
+              >
+                <span data-profile-cta-label>Create profile</span>
+              </button>
+              <button class="button button--secondary button--danger" id="reset-coach-data" type="button" hidden>
+                Reset incompatible coach data
+              </button>
+            </div>
+          </section>
+
+          <section class="profile-view profile-editor" id="profile-editor" aria-labelledby="profile-form-title" hidden>
+            <div class="profile-editor__heading">
+              <div>
+                <p class="section-kicker">Student profile</p>
+                <h3 id="profile-form-title" tabindex="-1">Tell the coach what matters to you.</h3>
+                <p id="profile-privacy-description">
+                  Required fields provide the comparable information used for personalized rankings. Do not enter sensitive details,
+                  identification numbers, contact information, grades, or financial information. Nothing is sent to a server.
+                </p>
+              </div>
+              <div class="profile-completeness profile-completeness--compact">
+                <label for="profile-form-progress">Profile completeness</label>
+                <progress id="profile-form-progress" max="100" value="0">0%</progress>
+                <span id="profile-form-progress-text">0 of 9 required sections complete (0%)</span>
+              </div>
+            </div>
+
+            <div class="profile-error-summary" id="profile-error-summary" role="alert" tabindex="-1" hidden>
+              <h4>Check the required profile details</h4>
+              <p>Your profile has not been saved. Correct the following fields:</p>
+              <ul id="profile-error-list"></ul>
+            </div>
+
+            <form
+              class="profile-form"
+              id="student-profile-form"
+              aria-describedby="profile-privacy-description"
+              novalidate
+            >
+              <div class="profile-form__grid">
+                <div class="profile-field" data-profile-field="citizenshipCountry">
+                  <label for="citizenship-country">
+                    Country of citizenship <span class="required-label">Required</span>
+                  </label>
+                  <div class="select-wrap">
+                    <select
+                      id="citizenship-country"
+                      name="citizenshipCountry"
+                      required
+                      aria-describedby="citizenship-country-help citizenship-country-error"
+                    >
+                      <option value="">Choose a country</option>
+                    </select>
+                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"></path></svg>
+                  </div>
+                  <p class="field-help" id="citizenship-country-help">Used only as a profile attribute; it does not confirm eligibility.</p>
+                  <p class="field-error" id="citizenship-country-error" hidden></p>
+                </div>
+
+                <div class="profile-field" data-profile-field="residenceCountry">
+                  <label for="residence-country">
+                    Country of residence <span class="required-label">Required</span>
+                  </label>
+                  <div class="select-wrap">
+                    <select
+                      id="residence-country"
+                      name="residenceCountry"
+                      required
+                      aria-describedby="residence-country-help residence-country-error"
+                    >
+                      <option value="">Choose a country</option>
+                    </select>
+                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"></path></svg>
+                  </div>
+                  <p class="field-help" id="residence-country-help">Choose where you currently live.</p>
+                  <p class="field-error" id="residence-country-error" hidden></p>
+                </div>
+
+                <div class="profile-field" data-profile-field="age">
+                  <label for="profile-age">Age <span class="optional-label">Optional</span></label>
+                  <input
+                    id="profile-age"
+                    name="age"
+                    type="number"
+                    min="1"
+                    max="120"
+                    step="1"
+                    inputmode="numeric"
+                    aria-describedby="profile-age-help profile-age-error"
+                  >
+                  <p class="field-help" id="profile-age-help">Leave this blank if you prefer not to share it.</p>
+                  <p class="field-error" id="profile-age-error" hidden></p>
+                </div>
+
+                <div class="profile-field" data-profile-field="educationStage">
+                  <label for="education-stage">
+                    Current education stage <span class="required-label">Required</span>
+                  </label>
+                  <div class="select-wrap">
+                    <select id="education-stage" name="educationStage" required aria-describedby="education-stage-error">
+                      <option value="">Choose your current stage</option>
+                    </select>
+                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"></path></svg>
+                  </div>
+                  <p class="field-error" id="education-stage-error" hidden></p>
+                </div>
+              </div>
+
+              <fieldset
+                class="profile-fieldset"
+                id="fields-of-interest-group"
+                data-profile-field="fieldsOfInterest"
+                aria-required="true"
+                aria-describedby="fields-of-interest-help fields-of-interest-error"
+                tabindex="-1"
+              >
+                <legend>Fields of interest <span class="required-label">Required</span></legend>
+                <p class="field-help" id="fields-of-interest-help">Choose all that apply.</p>
+                <div class="profile-choices" id="fields-of-interest-options"></div>
+                <p class="field-error" id="fields-of-interest-error" hidden></p>
+              </fieldset>
+
+              <fieldset
+                class="profile-fieldset"
+                id="preferred-categories-group"
+                data-profile-field="preferredCategories"
+                aria-required="true"
+                aria-describedby="preferred-categories-help preferred-categories-error"
+                tabindex="-1"
+              >
+                <legend>Preferred opportunity categories <span class="required-label">Required</span></legend>
+                <p class="field-help" id="preferred-categories-help">Choose all that you would like to explore.</p>
+                <div class="profile-choices" id="preferred-categories-options"></div>
+                <p class="field-error" id="preferred-categories-error" hidden></p>
+              </fieldset>
+
+              <div class="profile-field profile-field--wide" data-profile-field="goal">
+                <label for="profile-goal">
+                  Career or study goal <span class="required-label">Required</span>
+                </label>
+                <textarea
+                  id="profile-goal"
+                  name="goal"
+                  rows="4"
+                  maxlength="500"
+                  required
+                  placeholder="For example: I want to study renewable-energy engineering and build practical experience."
+                  aria-describedby="profile-goal-help profile-goal-count profile-goal-error"
+                ></textarea>
+                <div class="field-help-row">
+                  <p class="field-help" id="profile-goal-help">Share a broad goal only; do not include private or sensitive details.</p>
+                  <span id="profile-goal-count">0 / 500</span>
+                </div>
+                <p class="field-error" id="profile-goal-error" hidden></p>
+              </div>
+
+              <div class="profile-form__grid">
+                <div class="profile-field" data-profile-field="fundingPreference">
+                  <label for="funding-preference">
+                    Funding preference <span class="required-label">Required</span>
+                  </label>
+                  <div class="select-wrap">
+                    <select id="funding-preference" name="fundingPreference" required aria-describedby="funding-preference-error">
+                      <option value="">Choose a preference</option>
+                    </select>
+                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"></path></svg>
+                  </div>
+                  <p class="field-error" id="funding-preference-error" hidden></p>
+                </div>
+
+                <div class="profile-field" data-profile-field="mobilityPreference">
+                  <label for="mobility-preference">
+                    Willingness to travel or relocate <span class="required-label">Required</span>
+                  </label>
+                  <div class="select-wrap">
+                    <select id="mobility-preference" name="mobilityPreference" required aria-describedby="mobility-preference-error">
+                      <option value="">Choose a preference</option>
+                    </select>
+                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"></path></svg>
+                  </div>
+                  <p class="field-error" id="mobility-preference-error" hidden></p>
+                </div>
+
+                <div class="profile-field" data-profile-field="experienceLevel">
+                  <label for="experience-level">
+                    Relevant experience level <span class="required-label">Required</span>
+                  </label>
+                  <div class="select-wrap">
+                    <select id="experience-level" name="experienceLevel" required aria-describedby="experience-level-help experience-level-error">
+                      <option value="">Choose an experience level</option>
+                    </select>
+                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"></path></svg>
+                  </div>
+                  <p class="field-help" id="experience-level-help">Include relevant volunteering, projects, research, or work.</p>
+                  <p class="field-error" id="experience-level-error" hidden></p>
+                </div>
+              </div>
+
+              <div class="profile-privacy-notice">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3 5 6v5c0 4.6 2.8 8 7 10 4.2-2 7-5.4 7-10V6l-7-3Z"></path>
+                  <path d="m8.5 12 2.2 2.2 4.8-5"></path>
+                </svg>
+                <p>
+                  <strong>Private by default.</strong> Saving writes this profile only to this browser's local storage.
+                  It is not an account, is not uploaded, and may be lost if you clear browser data or use another device.
+                </p>
+              </div>
+
+              <div class="profile-actions">
+                <button class="button button--primary" type="submit">Save profile</button>
+                <button class="button button--secondary" id="cancel-profile-edit" type="button" hidden>Cancel editing</button>
+                <button class="button button--secondary button--danger" id="discard-invalid-profile" type="button" hidden>
+                  Clear invalid profile
+                </button>
+                <a href="#opportunities">Continue browsing opportunities</a>
+              </div>
+            </form>
+          </section>
+
+          <section class="profile-view profile-summary" id="profile-summary" aria-labelledby="profile-summary-title" hidden>
+            <div class="profile-summary__heading">
+              <div>
+                <p class="section-kicker">Saved in this browser</p>
+                <h3 id="profile-summary-title" tabindex="-1">Your student profile</h3>
+                <p>This profile can generate personalized relevance rankings. Eligibility guidance remains separate and must be verified at the source.</p>
+              </div>
+              <div class="profile-completeness">
+                <label for="profile-summary-progress">Profile completeness</label>
+                <progress id="profile-summary-progress" max="100" value="0">0%</progress>
+                <span id="profile-summary-progress-text">0 of 9 required sections complete (0%)</span>
+              </div>
+            </div>
+
+            <dl class="profile-summary__list" id="profile-summary-list"></dl>
+
+            <div class="profile-actions">
+              <button class="button button--primary" id="edit-profile" type="button">Edit profile</button>
+              <button class="button button--secondary button--danger" id="clear-profile" type="button">Clear profile</button>
+              <a href="#opportunities">Browse opportunities</a>
+            </div>
+          </section>
+        </div>
+
+        <section class="container matching-workspace" id="matching-workspace" aria-labelledby="matching-title">
+          <div class="matching-workspace__heading">
+            <div>
+              <p class="section-kicker">Transparent recommendations</p>
+              <h2 id="matching-title">Your personalized opportunity matches</h2>
+            </div>
+            <p>
+              A profile-match percentage measures represented preferences that align with your profile. It is not an
+              eligibility, admission, selection, or funding probability.
+            </p>
+          </div>
+
+          <p class="profile-message" id="matching-status" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+
+          <div class="matching-state matching-profile-required" id="matching-profile-required">
+            <div>
+              <h3 id="matching-profile-required-title" tabindex="-1">Create a profile to generate personalized matches.</h3>
+              <p>Your ordinary opportunity directory remains available without a profile.</p>
+            </div>
+            <div class="matching-state__actions">
+              <button
+                class="button button--primary"
+                type="button"
+                data-create-profile
+                data-create-label="Create my student profile"
+                data-edit-label="Edit my student profile"
+                aria-controls="profile-editor"
+                aria-expanded="false"
+              >
+                <span data-profile-cta-label>Create my student profile</span>
+              </button>
+              <a class="button button--secondary" href="#opportunities">Browse the directory</a>
+            </div>
+          </div>
+
+          <div class="matching-state matching-ready" id="matching-ready" hidden>
+            <div class="matching-profile-context">
+              <div>
+                <span class="panel-label">Profile used for matching</span>
+                <h3>Your saved student profile</h3>
+                <p id="matching-profile-context-copy"></p>
+              </div>
+              <dl id="matching-profile-context"></dl>
+            </div>
+            <div class="matching-ready__actions">
+              <button class="button button--primary button--large" id="find-matches" type="button" aria-controls="matching-results" disabled>
+                Find my matches
+                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"></path></svg>
+              </button>
+              <button class="button button--secondary" id="matching-edit-profile" type="button" aria-controls="profile-editor">Edit profile</button>
+              <span id="matching-data-status">Loading verified opportunities…</span>
+            </div>
+          </div>
+
+          <section class="matching-results" id="matching-results" aria-labelledby="matching-results-title" hidden>
+            <div class="matching-results__topline">
+              <div>
+                <span class="personalized-mode"><i aria-hidden="true"></i> Personalized ranking active</span>
+                <h3 id="matching-results-title" tabindex="-1">Ranked opportunities for your profile</h3>
+                <p id="matching-results-summary">No opportunities compared yet.</p>
+              </div>
+              <a class="button button--secondary" id="return-directory-order" href="#opportunities">
+                Browse normal directory order
+              </a>
+            </div>
+
+            <fieldset class="matching-view-controls">
+              <legend>Choose which personalized results to view</legend>
+              <div>
+                <button type="button" data-match-view="best" aria-pressed="true">Best matches</button>
+                <button type="button" data-match-view="all" aria-pressed="false">All opportunities</button>
+                <button type="button" data-match-view="actionable" aria-pressed="false">Currently actionable</button>
+                <button type="button" data-match-view="closed" aria-pressed="false">Closed opportunities</button>
+              </div>
+            </fieldset>
+
+            <p class="matching-result-count" id="matching-result-count" role="status" aria-live="polite"></p>
+            <div class="matching-grid" id="matching-grid" role="list" aria-labelledby="matching-results-title"></div>
+
+            <div class="matching-empty" id="matching-empty-view" hidden>
+              <h4>No opportunities are in this view.</h4>
+              <p>Choose another results view. Personalized matching never removes records from the normal directory.</p>
+            </div>
+          </section>
+        </section>
+
+        <dialog
+          class="confirm-dialog"
+          id="clear-profile-dialog"
+          aria-labelledby="clear-profile-title"
+          aria-describedby="clear-profile-description"
+        >
+          <form method="dialog">
+            <span class="confirm-dialog__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M5 7h14M9 7V4h6v3M8 10v7M12 10v7M16 10v7M7 7l1 14h8l1-14"></path></svg>
+            </span>
+            <h3 id="clear-profile-title">Clear your student profile?</h3>
+            <p id="clear-profile-description">This removes the profile from this browser. This action cannot be undone.</p>
+            <div class="confirm-dialog__actions">
+              <button class="button button--secondary" value="cancel" autofocus>Keep profile</button>
+              <button class="button button--danger-solid" id="confirm-clear-profile" type="button">Clear profile</button>
+            </div>
+          </form>
+        </dialog>
+      </section>
+
+      <section class="applications-section" id="my-applications" aria-labelledby="applications-title">
+        <div class="container">
+          <div class="applications-heading">
+            <div>
+              <p class="eyebrow">
+                <span class="eyebrow__dot" aria-hidden="true"></span>
+                Browser-local application workspace
+              </p>
+              <h2 id="applications-title" tabindex="-1">My Applications</h2>
+              <p>
+                Save opportunities from the directory or your personalized results, then organise your preparation
+                in one private workspace on this device.
+              </p>
+            </div>
+            <aside class="applications-privacy" aria-label="Application workspace privacy information">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 5 6v5c0 4.6 2.8 8 7 10 4.2-2 7-5.4 7-10V6l-7-3Z"></path>
+                <path d="m8.5 12 2.2 2.2 4.8-5"></path>
+              </svg>
+              <p>
+                <strong>Private to this browser.</strong> Saved opportunities, task progress, and notes stay in local
+                storage. Do not enter identification, financial, login, or other sensitive information.
+              </p>
+            </aside>
+          </div>
+
+          <p
+            class="applications-message"
+            id="applications-status"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            hidden
+          ></p>
+
+          <div class="applications-empty" id="applications-empty">
+            <span class="applications-empty__icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32">
+                <path d="M7 5h18v23l-9-5-9 5V5Z"></path>
+                <path d="M11 11h10M11 16h7"></path>
+              </svg>
+            </span>
+            <div>
+              <h3>No saved opportunities yet</h3>
+              <p>
+                Use a <strong>Save opportunity</strong> button in the directory or personalized results to add a real
+                opportunity here. Saving does not mean that you are eligible.
+              </p>
+            </div>
+            <a class="button button--primary" id="applications-browse" href="#opportunities">Browse opportunities</a>
+          </div>
+
+          <div class="applications-content" id="applications-content" hidden>
+            <div class="applications-overview" aria-label="Saved application overview">
+              <article class="applications-summary-card">
+                <span class="panel-label">Saved opportunities</span>
+                <strong id="applications-saved-count">0</strong>
+                <span>in this browser</span>
+              </article>
+
+              <article class="applications-summary-card applications-summary-card--statuses">
+                <span class="panel-label">Application statuses</span>
+                <ul id="applications-status-summary" aria-label="Saved opportunities by application status"></ul>
+              </article>
+
+              <article class="applications-summary-card applications-summary-card--progress">
+                <span class="panel-label">Overall task progress</span>
+                <progress id="applications-overall-progress" max="100" value="0">0%</progress>
+                <strong id="applications-progress-text">0 of 0 tasks complete (0%)</strong>
+              </article>
+            </div>
+
+            <aside class="applications-guidance" aria-label="Action plan guidance">
+              <strong>General preparation guidance—not official instructions.</strong>
+              <p>
+                Generated checklists are safe starting points. Requirements and deadlines can change, so confirm every
+                step on the official programme source before applying.
+              </p>
+            </aside>
+
+            <fieldset class="application-filters">
+              <legend>Filter saved opportunities by application status</legend>
+              <div>
+                <button type="button" data-application-filter="all" aria-pressed="true">All</button>
+                <button type="button" data-application-filter="saved" aria-pressed="false">Saved</button>
+                <button type="button" data-application-filter="researching" aria-pressed="false">Researching</button>
+                <button type="button" data-application-filter="preparing" aria-pressed="false">Preparing</button>
+                <button type="button" data-application-filter="ready-to-apply" aria-pressed="false">Ready to apply</button>
+                <button type="button" data-application-filter="submitted" aria-pressed="false">Submitted</button>
+                <button type="button" data-application-filter="outcome-received" aria-pressed="false">Outcome received</button>
+                <button type="button" data-application-filter="archived" aria-pressed="false">Archived</button>
+              </div>
+            </fieldset>
+
+            <p class="applications-result-count" id="applications-result-count" role="status" aria-live="polite"></p>
+            <div class="applications-list" id="applications-list" role="list" aria-labelledby="applications-title"></div>
+
+            <div class="applications-filter-empty" id="applications-filter-empty" hidden>
+              <h3>No saved opportunities have this status.</h3>
+              <p>Choose another status filter. Archived opportunities remain available in the Archived view.</p>
             </div>
           </div>
         </div>
       </section>
+
+      <dialog
+        class="confirm-dialog"
+        id="application-confirm-dialog"
+        aria-labelledby="application-confirm-title"
+        aria-describedby="application-confirm-description"
+      >
+        <form method="dialog">
+          <span class="confirm-dialog__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3 2.8 20h18.4L12 3Z"></path><path d="M12 9v5M12 17.2v.1"></path></svg>
+          </span>
+          <h3 id="application-confirm-title">Confirm this change</h3>
+          <p id="application-confirm-description">This action may remove saved application work from this browser.</p>
+          <div class="confirm-dialog__actions">
+            <button class="button button--secondary" value="cancel" autofocus>Cancel</button>
+            <button class="button button--danger-solid" id="confirm-application-action" type="button">Continue</button>
+          </div>
+        </form>
+      </dialog>
+
+      <dialog
+        class="confirm-dialog custom-task-dialog"
+        id="custom-task-dialog"
+        aria-labelledby="custom-task-title"
+        aria-describedby="custom-task-description"
+      >
+        <form id="custom-task-form" novalidate>
+          <span class="confirm-dialog__icon custom-task-dialog__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg>
+          </span>
+          <h3 id="custom-task-title">Edit custom task</h3>
+          <p id="custom-task-description">Keep this task practical and avoid sensitive personal information.</p>
+          <label for="custom-task-input">Custom task title</label>
+          <input
+            id="custom-task-input"
+            name="customTaskTitle"
+            type="text"
+            maxlength="160"
+            required
+            aria-describedby="custom-task-error"
+          >
+          <p class="field-error" id="custom-task-error" role="alert" hidden></p>
+          <div class="confirm-dialog__actions">
+            <button class="button button--secondary" type="button" value="cancel">Cancel</button>
+            <button class="button button--primary" id="save-custom-task-edit" type="submit">Save task</button>
+          </div>
+        </form>
+      </dialog>
     </main>
 
     <footer class="site-footer">
@@ -541,13 +1084,14 @@
           <div>
             <h2>Explore</h2>
             <a href="#opportunities">Opportunities</a>
+            <a href="#my-applications">My Applications</a>
             <a href="#distribution">Distribution</a>
           </div>
           <div>
             <h2>About</h2>
             <a href="#how-it-works">How it works</a>
             <a href="#source-verification">Source verification</a>
-            <a href="#ai-matching">AI matching</a>
+            <a href="#ai-coach">AI Coach</a>
           </div>
         </nav>
       </div>
@@ -572,6 +1116,28 @@
           </span>
         </div>
         <p class="card__description"></p>
+        <section class="card__match-guidance" aria-label="Personalized matching and eligibility guidance" hidden>
+          <div class="card__match-heading">
+            <div>
+              <strong class="card__match-score"></strong>
+              <span class="card__match-confidence"></span>
+            </div>
+            <span class="card__eligibility-status"></span>
+          </div>
+          <div class="card__match-reasons-wrap">
+            <h4>What shaped this ranking</h4>
+            <ul class="card__match-reasons"></ul>
+          </div>
+          <div class="card__eligibility-guidance">
+            <h4>Eligibility guidance</h4>
+            <div class="card__eligibility-details"></div>
+            <p class="card__source-reminder">Check full current requirements at the official source before applying.</p>
+          </div>
+          <details class="card__score-disclosure">
+            <summary>How this score was calculated</summary>
+            <div class="card__score-details"></div>
+          </details>
+        </section>
         <dl class="card__details">
           <div class="card__detail card__detail--wide">
             <dt>
@@ -630,10 +1196,135 @@
             <dd class="card__source"></dd>
           </div>
         </dl>
-        <a class="card__link" target="_blank" rel="noopener noreferrer">
-          View official source
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"></path></svg>
-        </a>
+        <div class="card__actions">
+          <button class="card__save" type="button" data-save-opportunity aria-pressed="false">
+            <span data-save-label>Save opportunity</span>
+          </button>
+          <a class="card__link" target="_blank" rel="noopener noreferrer">
+            View official source
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"></path></svg>
+          </a>
+        </div>
+        <p class="card__save-feedback" role="status" aria-live="polite" aria-atomic="true"></p>
+      </article>
+    </template>
+
+    <template id="application-card-template">
+      <article class="application-card" role="listitem">
+        <div class="application-card__topline">
+          <span class="application-card__category"></span>
+          <span class="application-card__deadline-status"></span>
+        </div>
+
+        <h3 class="application-card__title" tabindex="-1"></h3>
+        <p class="application-card__unavailable" role="status" hidden>
+          This saved opportunity is not currently available in the directory. Your saved work has been retained.
+        </p>
+
+        <dl class="application-card__metadata">
+          <div>
+            <dt>Deadline</dt>
+            <dd class="application-card__deadline"></dd>
+          </div>
+          <div>
+            <dt>Date added</dt>
+            <dd class="application-card__saved-date"></dd>
+          </div>
+        </dl>
+
+        <div class="application-card__status-field">
+          <div class="application-card__status-heading">
+            <label for="application-status-template">Application status</label>
+            <span class="application-card__status-label">Saved</span>
+          </div>
+          <span class="select-wrap">
+            <select class="application-card__status-select" id="application-status-template"></select>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"></path></svg>
+          </span>
+        </div>
+
+        <div class="application-card__progress-wrap">
+          <div>
+            <span>Checklist progress</span>
+            <strong class="application-card__progress-text">0 of 0 tasks complete (0%)</strong>
+          </div>
+          <progress class="application-card__progress" max="100" value="0">0%</progress>
+        </div>
+
+        <section class="application-card__current-guidance" aria-label="Current personalized guidance" hidden>
+          <p class="application-card__match"></p>
+          <p class="application-card__eligibility"></p>
+          <p>Current profile guidance is recalculated and may change after you edit your profile.</p>
+        </section>
+
+        <details class="application-card__manage">
+          <summary>Manage application plan</summary>
+          <div class="application-card__manage-content">
+            <section class="application-card__tasks" aria-label="Application preparation checklist">
+              <div class="application-card__subheading">
+                <div>
+                  <h4>Preparation checklist</h4>
+                  <p>General guidance unless a task is explicitly labelled as a verified requirement.</p>
+                </div>
+                <button class="button button--secondary" type="button" data-reset-checklist>Reset generated checklist</button>
+              </div>
+
+              <ul class="application-task-list"></ul>
+
+              <form class="custom-task-form" data-custom-task-form novalidate>
+                <div class="custom-task-form__controls">
+                  <div class="custom-task-form__field">
+                    <label for="custom-task-template">Add your own task</label>
+                    <input
+                      id="custom-task-template"
+                      type="text"
+                      maxlength="160"
+                      data-custom-task-input
+                      placeholder="For example: Ask a mentor to review my CV"
+                    >
+                  </div>
+                  <button class="button button--secondary" type="submit">Add custom task</button>
+                </div>
+                <div class="custom-task-form__help">
+                  <span>Custom task · stored only in this browser</span>
+                  <span class="custom-task-count">0 / 160</span>
+                </div>
+              </form>
+            </section>
+
+            <form class="application-notes-form" novalidate>
+              <div class="application-card__subheading">
+                <div>
+                  <h4>Private notes <span class="optional-label">Optional</span></h4>
+                  <p>
+                    Notes stay only in this browser. Do not store personal IDs, financial details, passwords, or other
+                    sensitive information.
+                  </p>
+                </div>
+              </div>
+              <label class="sr-only" for="application-notes-template">Private notes</label>
+              <textarea
+                class="application-notes"
+                id="application-notes-template"
+                rows="5"
+                maxlength="2000"
+              ></textarea>
+              <div class="application-notes-form__footer">
+                <span class="application-notes-count">0 / 2000</span>
+                <button class="button button--secondary" type="submit">Save notes</button>
+              </div>
+            </form>
+
+            <p class="application-card__message" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+          </div>
+        </details>
+
+        <div class="application-card__actions">
+          <a class="button button--secondary application-card__official" target="_blank" rel="noopener noreferrer">
+            View official source
+          </a>
+          <button class="button button--danger" type="button" data-unsave-opportunity>Remove from saved</button>
+        </div>
       </article>
     </template>
   </body>

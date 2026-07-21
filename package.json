@@ -1,0 +1,12 @@
+{
+  "name": "opportunitymap-ai-coach",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Framework-free OpportunityMap AI Coach static application",
+  "scripts": {
+    "test": "node --test --test-isolation=none",
+    "test:syntax": "node --check app.js && node --check js/config.js && node --check js/storage.js && node --check js/profile.js && node --check js/matching.js && node --check js/eligibility.js && node --check js/matches-ui.js && node --check js/action-plans.js && node --check js/saved-opportunities.js && node --check js/applications-ui.js && node --check tests/browser-smoke.mjs",
+    "test:browser": "node tests/browser-smoke.mjs"
+  }
+}
