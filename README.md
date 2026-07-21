@@ -1,14 +1,22 @@
-# OpportunityMap
+# OpportunityMap AI Coach
 
-OpportunityMap is a static scholarship and opportunity finder designed for Ghanaian and African students. It brings scholarships, competitions, fellowships, research programmes, summer programmes, internships, and other academic pathways into one searchable, student-friendly directory.
+OpportunityMap AI Coach is a static, privacy-conscious opportunity discovery and application-planning tool for Ghanaian and African students. It brings scholarships, competitions, fellowships, research programmes, summer programmes, internships, and other academic pathways into one searchable directory, then adds transparent browser-side personalisation and progress tracking.
 
-This repository contains the professional directory plus the first three OpenAI Build Week phases of **OpportunityMap AI Coach**. It remains intentionally framework-free, with no backend, database, account system, cloud synchronization, or API integration. Students can browse the full directory without creating a profile.
+> **OpenAI Build Week track:** Education
+>
+> **Public demo:** _Add the live deployment URL before final submission._
+
+The application remains intentionally framework-free, with no backend, database, account system, cloud synchronization, or runtime API integration. Students can always browse the full directory without creating a profile.
 
 ## The problem
 
 Talented students regularly miss valuable opportunities because information is fragmented across university pages, foundation websites, social posts, and informal networks. Even after finding a programme, a student may still need to work out whether it is relevant to their location, stage of study, field, and timeline.
 
 This is partly an educational equity problem: access to opportunity often depends on access to timely, well-organised information.
+
+## Intended users
+
+The primary users are secondary-school, undergraduate, postgraduate, and early-career students in Ghana and across Africa who need a clearer way to discover opportunities, assess possible fit, and organize application preparation. The directory also remains useful to educators, advisers, and mentors helping students locate trustworthy official sources.
 
 ## The solution
 
@@ -24,7 +32,7 @@ Students who choose to create a private browser profile can also generate a tran
 
 The interface uses careful language and direct official links. A “verified source” label means the programme's official page was reviewed when the starter dataset was prepared; it is not an endorsement, and applicants should always reconfirm dates and eligibility.
 
-## Features in this version
+## Main features
 
 - Responsive, portfolio-ready interface for desktop, tablet, and mobile
 - Strong education-access value proposition
@@ -63,7 +71,7 @@ The interface uses careful language and direct official links. A “verified sou
 - Private plain-text notes with a 2,000-character limit
 - Defensive storage-schema migration that preserves existing Phase 1 profiles
 
-Profile-match scores are relevance scores, not eligibility, admission, selection, or funding probabilities. Saving an opportunity also does not confirm eligibility. See `BUILD_WEEK_BASELINE.md` for the exact pre-hackathon boundary and `BUILD_WEEK_PROGRESS.md` for the phased Build Week record.
+Profile-match scores are relevance scores, not eligibility, admission, selection, or funding probabilities. Saving an opportunity also does not confirm eligibility. See the [Build Week baseline](BUILD_WEEK_BASELINE.md) for the exact pre-hackathon boundary and the [Build Week progress record](BUILD_WEEK_PROGRESS.md) for the phased development history.
 
 ## Technology stack
 
@@ -76,19 +84,54 @@ Profile-match scores are relevance scores, not eligibility, admission, selection
 
 There are no runtime dependencies, build tools, frameworks, backend services, or database requirements.
 
+## Architecture overview
+
+OpportunityMap is a client-side application served as static files:
+
+1. `index.html` provides the semantic page structure, forms, directory, AI Coach, and My Applications regions.
+2. `styles.css` provides the shared responsive visual system, focus treatment, dialogs, status presentation, and reduced-motion rules.
+3. `app.js` is the main entry point. It loads the JSON dataset, controls ordinary search and filters, synchronizes URL query parameters, renders directory cards, and initializes the feature modules.
+4. `js/config.js`, `js/profile.js`, and `js/storage.js` define canonical profile choices, validate/profile-form input, and manage defensive versioned browser persistence.
+5. `js/matching.js` and `js/eligibility.js` are separate pure engines for relevance ranking and evidence-limited eligibility guidance; `js/matches-ui.js` renders personalised results.
+6. `js/action-plans.js` and `js/saved-opportunities.js` manage deterministic checklists and immutable saved-record operations; `js/applications-ui.js` synchronizes save controls and renders the dashboard.
+7. `data/opportunities.json` is the single source of directory records. The interface does not hardcode or duplicate the full opportunity objects in browser storage.
+
+All product logic runs in the browser. Node.js is used only for development tests, while the browser smoke test drives a locally installed Chromium browser against a temporary local server and isolated browser profile.
+
+## Browser-local data and privacy
+
+The AI Coach stores its versioned state under the single `localStorage` key `opportunityMapCoachState`. It may contain a student profile, saved opportunity IDs, application statuses, tasks, and private notes. It does not store full duplicate opportunity records, permanent match scores, or eligibility decisions.
+
+- No account is required.
+- No coach data is transmitted to OpportunityMap, OpenAI, or another service.
+- The current application makes no runtime OpenAI API calls.
+- Students can browse manually without creating a profile or saving anything.
+- Students are told not to enter identification, financial, login, contact, grade, or other sensitive information.
+- Clearing site data, changing browser profiles, or moving to another device can remove or isolate the locally stored data; there is no cloud backup or synchronization.
+
+## Accessibility and responsive design
+
+The application uses semantic landmarks and headings, a skip link, labelled forms, fieldsets and legends, visible focus styles, keyboard-operable controls, validation summaries, live status announcements, text alongside colour-coded states, native progress elements with textual equivalents, and accessible disclosure and confirmation-dialog patterns. Motion is reduced under the user's `prefers-reduced-motion` setting.
+
+The layout is designed for desktop, tablet, and narrow mobile screens. The automated Chromium smoke test checks horizontal overflow at 1280 px, 768 px, 390 px, and 320 px. Manual screen-reader, contrast, reduced-motion, complete keyboard-path, and non-Chromium checks remain part of the final submission checklist.
+
 ## Project structure
 
 ```text
 OpportunityMap/
+├── .gitignore
 ├── BUILD_WEEK_BASELINE.md
 ├── BUILD_WEEK_PROGRESS.md
+├── LICENSE
+├── SUBMISSION_CHECKLIST.md
+├── README.md
 ├── index.html
 ├── styles.css
 ├── app.js
 ├── js/
-│   ├── config.js
 │   ├── action-plans.js
 │   ├── applications-ui.js
+│   ├── config.js
 │   ├── eligibility.js
 │   ├── matches-ui.js
 │   ├── matching.js
@@ -98,20 +141,19 @@ OpportunityMap/
 ├── data/
 │   └── opportunities.json
 ├── tests/
+│   ├── action-plans.test.js
+│   ├── browser-smoke.mjs
 │   ├── config.test.js
 │   ├── data.test.js
 │   ├── eligibility.test.js
 │   ├── markup.test.js
 │   ├── matching.test.js
 │   ├── profile.test.js
-│   ├── action-plans.test.js
-│   ├── browser-smoke.mjs
 │   ├── progress.test.js
 │   ├── saved-opportunities.test.js
 │   ├── storage-migration.test.js
 │   └── storage.test.js
-├── package.json
-└── README.md
+└── package.json
 ```
 
 ## Run locally
@@ -211,7 +253,20 @@ OpportunityMap is a static site and requires no build command.
 
 The same project can also be hosted on GitHub Pages or another static hosting service.
 
-## OpportunityMap AI Coach
+## OpenAI Build Week Development
+
+The dated Git history, [historical baseline](BUILD_WEEK_BASELINE.md), and [phase progress record](BUILD_WEEK_PROGRESS.md) establish these boundaries:
+
+| Product boundary | Commit | Date (UTC) | Commit subject |
+| --- | --- | --- | --- |
+| Pre–Build Week baseline | `f1b88ff` | 2026-07-13 | `Initial professional OpportunityMap build` |
+| Phase 1 complete | `f3d8193` | 2026-07-20 | `feat: add AI Coach profile foundation and local persistence` |
+| Phase 2 complete | `aaa4160` | 2026-07-20 | `feat: add explainable matching and eligibility guidance` |
+| Phase 3 complete | `b0c733f` | 2026-07-21 | `feat: add saved opportunities and application tracking` |
+
+### Features that existed before Build Week
+
+Commit `f1b88ff` already contained the professional static directory: the same nine verified opportunity records, keyword search, category/country/field/deadline filters, reset controls, URL query synchronization, responsive opportunity cards, official-source links, the regional distribution panel, responsive navigation, loading/error/empty states, and foundational accessibility behavior. Its “AI Matching · Coming Soon” area was a fictional preview; there was no profile, browser persistence, working personalisation, eligibility guidance, saving, or application tracking.
 
 ### Phase 1: profile and persistence
 
@@ -350,7 +405,7 @@ Removing a freshly saved opportunity with untouched generated tasks happens dire
 
 Private notes are stored as plain text, limited to 2,000 characters, and never inserted as HTML. They remain in this browser only. Students should not enter identification numbers, passwords, financial details, contact details, or other sensitive information.
 
-### Current limitations and scope
+## Current limitations
 
 - The directory intentionally remains the same small inventory of nine opportunities; ranking quality is limited by that coverage.
 - Matching metadata is conservative and incomplete. Unknown factors reduce the amount of comparison evidence rather than reducing the score.
@@ -361,8 +416,14 @@ Private notes are stored as plain text, limited to 2,000 characters, and never i
 - The checklist deliberately contains general preparation guidance unless a task is explicitly labelled as a verified requirement.
 - No target dates or reminders are generated in Phase 3.
 - There is no OpenAI or other API integration, account, backend, database, cloud storage, or notification service.
+- The project does not live-check official pages, so a `verified` record can become stale after its recorded `lastVerified` date.
+- Browser automation currently targets Chromium; screen-reader, contrast, reduced-motion, complete keyboard-path, Firefox, and Safari checks remain manual.
 
-Run all focused development tests and JavaScript syntax checks with:
+The directory is a discovery aid, not a complete catalogue. A profile match is not an eligibility, admission, selection, or funding probability; eligibility guidance covers only explicitly represented criteria. Students must check the current deadline, complete eligibility rules, funding terms, required documents, and application process at the linked official source before acting.
+
+## How to test
+
+No dependency installation or build step is required. With Node.js and a local Chromium-based browser available, run from the repository root:
 
 ```powershell
 npm test
@@ -370,9 +431,50 @@ npm run test:syntax
 npm run test:browser
 ```
 
-`test:browser` uses a locally installed Chrome or Edge executable to exercise the running app in an isolated temporary browser profile. Set `OPPORTUNITYMAP_BROWSER` to an alternate Chromium executable when needed. It checks directory and personalized saves, profile persistence, dashboard updates, task and note changes, reload recovery, confirmation behavior, console errors, and horizontal overflow at 1280px, 768px, 390px, and 320px.
+`npm test` runs the complete Node test suite. `test:syntax` parses the application modules and browser-smoke script. `test:browser` uses a locally installed Chrome or Edge executable to exercise the app through an isolated temporary browser profile; set `OPPORTUNITYMAP_BROWSER` to an alternate Chromium executable if needed.
+
+To repeat the HTTP smoke check, serve the repository as described in [Run locally](#run-locally), then confirm that `/`, `/index.html?search=internship`, `/styles.css`, `/app.js`, and `/data/opportunities.json` each return HTTP 200 with an appropriate content type. Validate final patch formatting with:
+
+```powershell
+git diff --check
+```
+
+### Automated test results
+
+Latest local submission audit: **21 July 2026**.
+
+| Check | Result |
+| --- | --- |
+| Complete Node test suite | 93 passed, 0 failed, 0 skipped |
+| JavaScript syntax checks | Passed for the entry point, all feature modules, and browser-smoke script |
+| Dataset and metadata validation | Passed; exactly 9 unique records, unchanged baseline display fields, valid schema/provenance |
+| HTTP and content-type smoke checks | 5 of 5 passed |
+| Browser integration | Passed: profile, matching, saving, dashboard, tasks, notes, persistence, and confirmations |
+| JavaScript console | No errors during the browser flow |
+| Responsive overflow | Passed at 1280 px, 768 px, 390 px, and 320 px |
+| Internal documentation and page-fragment links | Passed |
+| `git diff --check` | Passed |
 
 For a high-level manual check, serve the repository locally, save one opportunity from the normal directory and another from personalised results, then open **My Applications**. Change their statuses, update task states, add/edit/delete a custom task, save notes, apply each status filter, and reload the page to confirm persistence. Also verify that an unsave with planning work asks for confirmation and that cancelling the dialog keeps the record. Repeat with keyboard-only navigation and at desktop, tablet, 390px, and 320px widths.
+
+## How Codex and GPT-5.6 were used
+
+GPT-5.6 powered the primary Codex engineering sessions used during OpenAI Build Week. Codex first audited the pre-existing `f1b88ff` repository and helped turn the selected product direction into three bounded implementation phases. It then supported implementation of the browser-local profile foundation and defensive persistence; deterministic, explainable relevance matching and separate eligibility guidance; saved opportunities, action-plan checklists, statuses, tasks, progress, and private notes; and the focused automated test and browser-validation suite.
+
+The human developer selected the Education-track problem and feature scope, made the product and risk decisions, reviewed the design and implementation, manually tested the application, and committed each completed phase. Codex assisted with repository analysis, architecture, implementation, documentation, and repeatable validation; it did not replace human product judgment or official-source review.
+
+The application itself currently uses deterministic browser-side JavaScript and makes **no runtime OpenAI API calls**. It does not send profiles, saved work, or notes to OpenAI. GPT-5.6 was part of the Codex engineering workflow, not a hidden production service or a claim that the deployed interface is generative AI.
+
+Important product and engineering decisions made during that workflow include:
+
+- keeping the profile-match percentage separate from eligibility guidance, admission likelihood, and funding outcomes;
+- refusing to invent eligibility claims, application requirements, documents, or deadlines when the dataset lacks evidence;
+- directing students to the current official source for every final eligibility and application decision;
+- keeping personal profiles and application work browser-local with no account or backend;
+- preserving the original nine-opportunity inventory and its pre-existing display information;
+- documenting `f1b88ff` as the historical pre–Build Week boundary and recording each later phase separately;
+- protecting meaningful application work with conditional unsave confirmation while profile clearing preserves saved applications; and
+- migrating supported version 1 browser state to schema version 2 so existing profiles survive the Phase 3 storage upgrade.
 
 ## Research and analytics component
 
@@ -389,7 +491,7 @@ With a larger, consistently maintained dataset, future research dashboards could
 
 Those analytics should clearly distinguish directory coverage from the real-world supply of opportunities; an incomplete dataset must not be presented as a complete measure of access.
 
-## Platform growth path
+## Future improvements
 
 The JSON dataset is appropriate for the first version. A fuller platform can later add:
 
@@ -415,3 +517,7 @@ Before adding or updating an opportunity:
 7. Test search, filters, cards, and regional counts after editing the JSON.
 
 OpportunityMap is an early product foundation built around a simple idea: students should not miss a path merely because they never had a fair chance to see it.
+
+## License
+
+OpportunityMap is available under the [MIT License](LICENSE).

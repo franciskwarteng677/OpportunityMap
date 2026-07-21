@@ -6,6 +6,19 @@ Commit `f1b88ff` (`Initial professional OpportunityMap build`) is the pre–Open
 
 `BUILD_WEEK_BASELINE.md` is the historical record of that boundary. This file records the additions made after it.
 
+### Dated commit boundaries
+
+The current branch history records each completed phase separately:
+
+| Boundary | Commit | Date (UTC) | Commit subject |
+| --- | --- | --- | --- |
+| Pre–Build Week baseline | `f1b88ff` | 2026-07-13 | `Initial professional OpportunityMap build` |
+| Phase 1 complete | `f3d8193` | 2026-07-20 | `feat: add AI Coach profile foundation and local persistence` |
+| Phase 2 complete | `aaa4160` | 2026-07-20 | `feat: add explainable matching and eligibility guidance` |
+| Phase 3 complete | `b0c733f` | 2026-07-21 | `feat: add saved opportunities and application tracking` |
+
+These commits, together with `BUILD_WEEK_BASELINE.md`, separate the original product from the three Build Week extensions. The final submission-documentation audit occurs after `b0c733f` and does not change product behaviour or the historical boundaries above.
+
 ## Before OpenAI Build Week
 
 The baseline product was a framework-free static opportunity directory with:
@@ -285,4 +298,4 @@ npm run test:browser
 
 The browser command launches a locally installed Chromium browser with an isolated temporary profile and checks the complete save-to-dashboard flow, reload persistence, destructive confirmations, JavaScript console errors, and horizontal overflow at 1280px, 768px, 390px, and 320px. `OPPORTUNITYMAP_BROWSER` may point to an alternate Chromium executable.
 
-For manual use, serve the project over HTTP, browse or generate personalised results, and use a Save control. Open **My Applications**, change status and task states, add/edit/delete a custom task, save notes, filter by status, and reload to verify persistence. Check conditional unsave, checklist-reset, and custom-task-delete confirmations with keyboard-only input. Test the responsive layout at desktop, tablet, 390px, and 320px widths. These are verification steps to perform; this document does not claim a browser run has passed until the current implementation is tested.
+For manual use, serve the project over HTTP, browse or generate personalised results, and use a Save control. Open **My Applications**, change status and task states, add/edit/delete a custom task, save notes, filter by status, and reload to verify persistence. Check conditional unsave, checklist-reset, and custom-task-delete confirmations with keyboard-only input. Test the responsive layout at desktop, tablet, 390px, and 320px widths. The 21 July 2026 local submission audit passed the automated browser flow; public-deployment, screen-reader, complete keyboard-path, reduced-motion, contrast, and non-Chromium checks remain manual.
