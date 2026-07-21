@@ -45,6 +45,15 @@ const validProfile = {
   experienceLevel: "under_one_year",
 };
 
+const validSavedOpportunity = {
+  opportunityId: "opp-future",
+  savedAt: "2026-07-19T00:00:00.000Z",
+  updatedAt: "2026-07-19T00:00:00.000Z",
+  applicationStatus: "saved",
+  tasks: [],
+  notes: "",
+};
+
 test("default coach state has the versioned empty shape and is fresh each time", () => {
   const first = createDefaultCoachState();
   const second = createDefaultCoachState();
@@ -138,12 +147,12 @@ test("unsupported profile input is rejected without touching storage", () => {
   assert.equal(storage.setCalls.length, 0);
 });
 
-test("saving and editing a profile preserve reserved future state", () => {
+test("saving and editing a profile preserve saved application state", () => {
   const storage = new MemoryStorage();
   const initialState = {
     schemaVersion: COACH_SCHEMA_VERSION,
     profile: validProfile,
-    savedOpportunities: { "opp-future": { saved: true } },
+    savedOpportunities: { "opp-future": validSavedOpportunity },
     preferences: { theme: "system" },
     updatedAt: "2026-07-19T00:00:00.000Z",
   };
@@ -167,7 +176,7 @@ test("clearing removes only the profile and keeps the namespaced state", () => {
   const initialState = {
     schemaVersion: COACH_SCHEMA_VERSION,
     profile: validProfile,
-    savedOpportunities: { "opp-future": { saved: true } },
+    savedOpportunities: { "opp-future": validSavedOpportunity },
     preferences: { compact: true },
     updatedAt: "2026-07-19T00:00:00.000Z",
   };
@@ -185,7 +194,7 @@ test("clearing removes only the profile and keeps the namespaced state", () => {
 
 test("a future schema is not silently overwritten during profile save", () => {
   const futureState = JSON.stringify({
-    schemaVersion: 2,
+    schemaVersion: COACH_SCHEMA_VERSION + 1,
     profile: {},
     savedOpportunities: {},
     preferences: {},

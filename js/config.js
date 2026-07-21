@@ -1,12 +1,21 @@
 "use strict";
 
 export const COACH_STORAGE_KEY = "opportunityMapCoachState";
-export const COACH_SCHEMA_VERSION = 1;
+export const COACH_SCHEMA_VERSION = 2;
+export const LEGACY_COACH_SCHEMA_VERSION = 1;
 
 export const PROFILE_LIMITS = Object.freeze({
   minimumAge: 1,
   maximumAge: 120,
   goalMaximumLength: 500,
+});
+
+export const APPLICATION_LIMITS = Object.freeze({
+  notesMaximumLength: 2000,
+  customTaskTitleMaximumLength: 160,
+  taskTitleMaximumLength: 240,
+  identifierMaximumLength: 200,
+  maximumTasksPerOpportunity: 100,
 });
 
 function freezeOptions(options) {
@@ -69,6 +78,28 @@ export const EXPERIENCE_LEVEL_OPTIONS = freezeOptions([
   { value: "one_to_two_years", label: "1–2 years" },
   { value: "three_to_five_years", label: "3–5 years" },
   { value: "over_five_years", label: "More than 5 years" },
+]);
+
+export const APPLICATION_STATUS_OPTIONS = freezeOptions([
+  { value: "saved", label: "Saved" },
+  { value: "researching", label: "Researching" },
+  { value: "preparing", label: "Preparing" },
+  { value: "ready-to-apply", label: "Ready to apply" },
+  { value: "submitted", label: "Submitted" },
+  { value: "outcome-received", label: "Outcome received" },
+  { value: "archived", label: "Archived" },
+]);
+
+export const TASK_STATUS_OPTIONS = freezeOptions([
+  { value: "not-started", label: "Not started" },
+  { value: "in-progress", label: "In progress" },
+  { value: "complete", label: "Complete" },
+]);
+
+export const TASK_SOURCE_TYPE_OPTIONS = freezeOptions([
+  { value: "general-guidance", label: "General guidance" },
+  { value: "verified-requirement", label: "Verified requirement" },
+  { value: "custom", label: "Custom task" },
 ]);
 
 export const PROFILE_REQUIRED_FIELDS = Object.freeze([

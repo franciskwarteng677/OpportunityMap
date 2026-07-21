@@ -28,6 +28,7 @@
         <nav class="primary-nav" aria-label="Primary navigation">
           <a href="#opportunities">Explore</a>
           <a href="#ai-coach">AI Coach</a>
+          <a href="#my-applications">My Applications</a>
           <a href="#distribution">Distribution</a>
           <a href="#how-it-works">How it works</a>
         </nav>
@@ -44,6 +45,7 @@
           <nav aria-label="Mobile navigation">
             <a href="#opportunities">Explore opportunities</a>
             <a href="#ai-coach">OpportunityMap AI Coach</a>
+            <a href="#my-applications">My Applications</a>
             <a href="#distribution">Opportunity distribution</a>
             <a href="#how-it-works">How it works</a>
             <a class="mobile-nav__cta" href="#opportunities">Browse the directory</a>
@@ -909,6 +911,159 @@
           </form>
         </dialog>
       </section>
+
+      <section class="applications-section" id="my-applications" aria-labelledby="applications-title">
+        <div class="container">
+          <div class="applications-heading">
+            <div>
+              <p class="eyebrow">
+                <span class="eyebrow__dot" aria-hidden="true"></span>
+                Browser-local application workspace
+              </p>
+              <h2 id="applications-title" tabindex="-1">My Applications</h2>
+              <p>
+                Save opportunities from the directory or your personalized results, then organise your preparation
+                in one private workspace on this device.
+              </p>
+            </div>
+            <aside class="applications-privacy" aria-label="Application workspace privacy information">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 5 6v5c0 4.6 2.8 8 7 10 4.2-2 7-5.4 7-10V6l-7-3Z"></path>
+                <path d="m8.5 12 2.2 2.2 4.8-5"></path>
+              </svg>
+              <p>
+                <strong>Private to this browser.</strong> Saved opportunities, task progress, and notes stay in local
+                storage. Do not enter identification, financial, login, or other sensitive information.
+              </p>
+            </aside>
+          </div>
+
+          <p
+            class="applications-message"
+            id="applications-status"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            hidden
+          ></p>
+
+          <div class="applications-empty" id="applications-empty">
+            <span class="applications-empty__icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32">
+                <path d="M7 5h18v23l-9-5-9 5V5Z"></path>
+                <path d="M11 11h10M11 16h7"></path>
+              </svg>
+            </span>
+            <div>
+              <h3>No saved opportunities yet</h3>
+              <p>
+                Use a <strong>Save opportunity</strong> button in the directory or personalized results to add a real
+                opportunity here. Saving does not mean that you are eligible.
+              </p>
+            </div>
+            <a class="button button--primary" id="applications-browse" href="#opportunities">Browse opportunities</a>
+          </div>
+
+          <div class="applications-content" id="applications-content" hidden>
+            <div class="applications-overview" aria-label="Saved application overview">
+              <article class="applications-summary-card">
+                <span class="panel-label">Saved opportunities</span>
+                <strong id="applications-saved-count">0</strong>
+                <span>in this browser</span>
+              </article>
+
+              <article class="applications-summary-card applications-summary-card--statuses">
+                <span class="panel-label">Application statuses</span>
+                <ul id="applications-status-summary" aria-label="Saved opportunities by application status"></ul>
+              </article>
+
+              <article class="applications-summary-card applications-summary-card--progress">
+                <span class="panel-label">Overall task progress</span>
+                <progress id="applications-overall-progress" max="100" value="0">0%</progress>
+                <strong id="applications-progress-text">0 of 0 tasks complete (0%)</strong>
+              </article>
+            </div>
+
+            <aside class="applications-guidance" aria-label="Action plan guidance">
+              <strong>General preparation guidance—not official instructions.</strong>
+              <p>
+                Generated checklists are safe starting points. Requirements and deadlines can change, so confirm every
+                step on the official programme source before applying.
+              </p>
+            </aside>
+
+            <fieldset class="application-filters">
+              <legend>Filter saved opportunities by application status</legend>
+              <div>
+                <button type="button" data-application-filter="all" aria-pressed="true">All</button>
+                <button type="button" data-application-filter="saved" aria-pressed="false">Saved</button>
+                <button type="button" data-application-filter="researching" aria-pressed="false">Researching</button>
+                <button type="button" data-application-filter="preparing" aria-pressed="false">Preparing</button>
+                <button type="button" data-application-filter="ready-to-apply" aria-pressed="false">Ready to apply</button>
+                <button type="button" data-application-filter="submitted" aria-pressed="false">Submitted</button>
+                <button type="button" data-application-filter="outcome-received" aria-pressed="false">Outcome received</button>
+                <button type="button" data-application-filter="archived" aria-pressed="false">Archived</button>
+              </div>
+            </fieldset>
+
+            <p class="applications-result-count" id="applications-result-count" role="status" aria-live="polite"></p>
+            <div class="applications-list" id="applications-list" role="list" aria-labelledby="applications-title"></div>
+
+            <div class="applications-filter-empty" id="applications-filter-empty" hidden>
+              <h3>No saved opportunities have this status.</h3>
+              <p>Choose another status filter. Archived opportunities remain available in the Archived view.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <dialog
+        class="confirm-dialog"
+        id="application-confirm-dialog"
+        aria-labelledby="application-confirm-title"
+        aria-describedby="application-confirm-description"
+      >
+        <form method="dialog">
+          <span class="confirm-dialog__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3 2.8 20h18.4L12 3Z"></path><path d="M12 9v5M12 17.2v.1"></path></svg>
+          </span>
+          <h3 id="application-confirm-title">Confirm this change</h3>
+          <p id="application-confirm-description">This action may remove saved application work from this browser.</p>
+          <div class="confirm-dialog__actions">
+            <button class="button button--secondary" value="cancel" autofocus>Cancel</button>
+            <button class="button button--danger-solid" id="confirm-application-action" type="button">Continue</button>
+          </div>
+        </form>
+      </dialog>
+
+      <dialog
+        class="confirm-dialog custom-task-dialog"
+        id="custom-task-dialog"
+        aria-labelledby="custom-task-title"
+        aria-describedby="custom-task-description"
+      >
+        <form id="custom-task-form" novalidate>
+          <span class="confirm-dialog__icon custom-task-dialog__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg>
+          </span>
+          <h3 id="custom-task-title">Edit custom task</h3>
+          <p id="custom-task-description">Keep this task practical and avoid sensitive personal information.</p>
+          <label for="custom-task-input">Custom task title</label>
+          <input
+            id="custom-task-input"
+            name="customTaskTitle"
+            type="text"
+            maxlength="160"
+            required
+            aria-describedby="custom-task-error"
+          >
+          <p class="field-error" id="custom-task-error" role="alert" hidden></p>
+          <div class="confirm-dialog__actions">
+            <button class="button button--secondary" type="button" value="cancel">Cancel</button>
+            <button class="button button--primary" id="save-custom-task-edit" type="submit">Save task</button>
+          </div>
+        </form>
+      </dialog>
     </main>
 
     <footer class="site-footer">
@@ -929,6 +1084,7 @@
           <div>
             <h2>Explore</h2>
             <a href="#opportunities">Opportunities</a>
+            <a href="#my-applications">My Applications</a>
             <a href="#distribution">Distribution</a>
           </div>
           <div>
@@ -1040,10 +1196,135 @@
             <dd class="card__source"></dd>
           </div>
         </dl>
-        <a class="card__link" target="_blank" rel="noopener noreferrer">
-          View official source
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"></path></svg>
-        </a>
+        <div class="card__actions">
+          <button class="card__save" type="button" data-save-opportunity aria-pressed="false">
+            <span data-save-label>Save opportunity</span>
+          </button>
+          <a class="card__link" target="_blank" rel="noopener noreferrer">
+            View official source
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"></path></svg>
+          </a>
+        </div>
+        <p class="card__save-feedback" role="status" aria-live="polite" aria-atomic="true"></p>
+      </article>
+    </template>
+
+    <template id="application-card-template">
+      <article class="application-card" role="listitem">
+        <div class="application-card__topline">
+          <span class="application-card__category"></span>
+          <span class="application-card__deadline-status"></span>
+        </div>
+
+        <h3 class="application-card__title" tabindex="-1"></h3>
+        <p class="application-card__unavailable" role="status" hidden>
+          This saved opportunity is not currently available in the directory. Your saved work has been retained.
+        </p>
+
+        <dl class="application-card__metadata">
+          <div>
+            <dt>Deadline</dt>
+            <dd class="application-card__deadline"></dd>
+          </div>
+          <div>
+            <dt>Date added</dt>
+            <dd class="application-card__saved-date"></dd>
+          </div>
+        </dl>
+
+        <div class="application-card__status-field">
+          <div class="application-card__status-heading">
+            <label for="application-status-template">Application status</label>
+            <span class="application-card__status-label">Saved</span>
+          </div>
+          <span class="select-wrap">
+            <select class="application-card__status-select" id="application-status-template"></select>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"></path></svg>
+          </span>
+        </div>
+
+        <div class="application-card__progress-wrap">
+          <div>
+            <span>Checklist progress</span>
+            <strong class="application-card__progress-text">0 of 0 tasks complete (0%)</strong>
+          </div>
+          <progress class="application-card__progress" max="100" value="0">0%</progress>
+        </div>
+
+        <section class="application-card__current-guidance" aria-label="Current personalized guidance" hidden>
+          <p class="application-card__match"></p>
+          <p class="application-card__eligibility"></p>
+          <p>Current profile guidance is recalculated and may change after you edit your profile.</p>
+        </section>
+
+        <details class="application-card__manage">
+          <summary>Manage application plan</summary>
+          <div class="application-card__manage-content">
+            <section class="application-card__tasks" aria-label="Application preparation checklist">
+              <div class="application-card__subheading">
+                <div>
+                  <h4>Preparation checklist</h4>
+                  <p>General guidance unless a task is explicitly labelled as a verified requirement.</p>
+                </div>
+                <button class="button button--secondary" type="button" data-reset-checklist>Reset generated checklist</button>
+              </div>
+
+              <ul class="application-task-list"></ul>
+
+              <form class="custom-task-form" data-custom-task-form novalidate>
+                <div class="custom-task-form__controls">
+                  <div class="custom-task-form__field">
+                    <label for="custom-task-template">Add your own task</label>
+                    <input
+                      id="custom-task-template"
+                      type="text"
+                      maxlength="160"
+                      data-custom-task-input
+                      placeholder="For example: Ask a mentor to review my CV"
+                    >
+                  </div>
+                  <button class="button button--secondary" type="submit">Add custom task</button>
+                </div>
+                <div class="custom-task-form__help">
+                  <span>Custom task · stored only in this browser</span>
+                  <span class="custom-task-count">0 / 160</span>
+                </div>
+              </form>
+            </section>
+
+            <form class="application-notes-form" novalidate>
+              <div class="application-card__subheading">
+                <div>
+                  <h4>Private notes <span class="optional-label">Optional</span></h4>
+                  <p>
+                    Notes stay only in this browser. Do not store personal IDs, financial details, passwords, or other
+                    sensitive information.
+                  </p>
+                </div>
+              </div>
+              <label class="sr-only" for="application-notes-template">Private notes</label>
+              <textarea
+                class="application-notes"
+                id="application-notes-template"
+                rows="5"
+                maxlength="2000"
+              ></textarea>
+              <div class="application-notes-form__footer">
+                <span class="application-notes-count">0 / 2000</span>
+                <button class="button button--secondary" type="submit">Save notes</button>
+              </div>
+            </form>
+
+            <p class="application-card__message" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+          </div>
+        </details>
+
+        <div class="application-card__actions">
+          <a class="button button--secondary application-card__official" target="_blank" rel="noopener noreferrer">
+            View official source
+          </a>
+          <button class="button button--danger" type="button" data-unsave-opportunity>Remove from saved</button>
+        </div>
       </article>
     </template>
   </body>

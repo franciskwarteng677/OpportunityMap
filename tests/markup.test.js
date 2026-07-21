@@ -82,3 +82,49 @@ test("Phase 2 copy distinguishes profile relevance from eligibility and avoids g
   assert.match(html, /ordinary opportunity directory remains available without a profile/i);
   assert.doesNotMatch(html, /% eligible|you will qualify|guaranteed match|guaranteed admission/i);
 });
+
+test("Phase 3 exposes accessible shared save controls and the application dashboard", () => {
+  for (const id of [
+    "my-applications",
+    "applications-title",
+    "applications-status",
+    "applications-empty",
+    "applications-content",
+    "applications-overall-progress",
+    "applications-list",
+    "application-confirm-dialog",
+    "custom-task-dialog",
+    "application-card-template",
+  ]) {
+    assert.match(html, new RegExp(`id="${id}"`));
+  }
+
+  assert.match(html, /data-save-opportunity aria-pressed="false"/);
+  assert.match(html, /class="card__save-feedback" role="status" aria-live="polite"/);
+  assert.match(html, /<progress id="applications-overall-progress"/);
+  assert.match(html, /General preparation guidance—not official instructions/);
+  assert.match(html, /Saving does not mean that you are eligible/);
+});
+
+test("Phase 3 dashboard filters use every canonical application status", () => {
+  assert.deepEqual(
+    [...html.matchAll(/data-application-filter="([^"]+)"/g)].map((match) => match[1]),
+    [
+      "all",
+      "saved",
+      "researching",
+      "preparing",
+      "ready-to-apply",
+      "submitted",
+      "outcome-received",
+      "archived",
+    ],
+  );
+
+  assert.match(html, /class="application-card__status-select"/);
+  assert.match(html, /data-custom-task-form/);
+  assert.match(html, /maxlength="160"\s+data-custom-task-input/);
+  assert.match(html, /class="application-notes"[\s\S]*maxlength="2000"/);
+  assert.match(html, /data-reset-checklist/);
+  assert.match(html, /data-unsave-opportunity/);
+});

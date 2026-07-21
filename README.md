@@ -2,7 +2,7 @@
 
 OpportunityMap is a static scholarship and opportunity finder designed for Ghanaian and African students. It brings scholarships, competitions, fellowships, research programmes, summer programmes, internships, and other academic pathways into one searchable, student-friendly directory.
 
-This repository contains the professional directory plus the first two OpenAI Build Week phases of **OpportunityMap AI Coach**. It remains intentionally framework-free, with no backend, database, account system, or API integration. Students can browse the full directory without creating a profile.
+This repository contains the professional directory plus the first three OpenAI Build Week phases of **OpportunityMap AI Coach**. It remains intentionally framework-free, with no backend, database, account system, cloud synchronization, or API integration. Students can browse the full directory without creating a profile.
 
 ## The problem
 
@@ -20,7 +20,7 @@ OpportunityMap offers one clear place to:
 - understand key details before investing time in an application; and
 - continue to the official programme source for current requirements and submission steps.
 
-Students who choose to create a private browser profile can also generate a transparent ranking of the same verified directory. Each personalised result explains the profile factors that were compared and presents eligibility guidance separately from relevance.
+Students who choose to create a private browser profile can also generate a transparent ranking of the same verified directory. Each personalised result explains the profile factors that were compared and presents eligibility guidance separately from relevance. From either view, students can save an opportunity to a browser-local application dashboard, follow clearly labelled preparation guidance, add their own tasks and notes, and track progress across reloads.
 
 The interface uses careful language and direct official links. A “verified source” label means the programme's official page was reviewed when the starter dataset was prepared; it is not an endorsement, and applicants should always reconfirm dates and eligibility.
 
@@ -44,7 +44,7 @@ The interface uses careful language and direct official links. A “verified sou
 - Per-card source name, verification date, student level, funding type, and application context
 - Data-driven Opportunity Distribution panel with a lightweight Africa regional view
 - “How OpportunityMap Works” guidance
-- Real OpportunityMap AI Coach introduction with transparent Phase 2 scope
+- Real OpportunityMap AI Coach introduction with transparent Build Week scope
 - Accessible landmarks, labels, focus states, status announcements, and reduced-motion support
 - Accessible student profile creation, editing, summary, completeness, and clearing
 - Canonical internal profile values for deterministic personalisation
@@ -56,8 +56,14 @@ The interface uses careful language and direct official links. A “verified sou
 - Two or three plain-language ranking explanations that lead with positive matches and clearly label preference differences or unavailable comparisons
 - Evidence-limited eligibility guidance that distinguishes represented matches, known conflicts, missing information, and source verification
 - Per-result score-calculation disclosures and direct official-source links
+- Synchronized Save/Saved controls on ordinary directory cards and personalised results
+- Browser-local My Applications dashboard with seven application statuses and status filters
+- General preparation checklists, evidence-limited verified-requirement reminders, and custom tasks
+- Task-level and aggregate progress tracking across reloads
+- Private plain-text notes with a 2,000-character limit
+- Defensive storage-schema migration that preserves existing Phase 1 profiles
 
-Profile-match scores are relevance scores, not eligibility, admission, selection, or funding probabilities. Saved opportunities, action plans, progress tracking, and API features are not active in this phase. See `BUILD_WEEK_BASELINE.md` for the exact pre-hackathon boundary and `BUILD_WEEK_PROGRESS.md` for the phased Build Week record.
+Profile-match scores are relevance scores, not eligibility, admission, selection, or funding probabilities. Saving an opportunity also does not confirm eligibility. See `BUILD_WEEK_BASELINE.md` for the exact pre-hackathon boundary and `BUILD_WEEK_PROGRESS.md` for the phased Build Week record.
 
 ## Technology stack
 
@@ -81,10 +87,13 @@ OpportunityMap/
 ├── app.js
 ├── js/
 │   ├── config.js
+│   ├── action-plans.js
+│   ├── applications-ui.js
 │   ├── eligibility.js
 │   ├── matches-ui.js
 │   ├── matching.js
 │   ├── profile.js
+│   ├── saved-opportunities.js
 │   └── storage.js
 ├── data/
 │   └── opportunities.json
@@ -95,6 +104,11 @@ OpportunityMap/
 │   ├── markup.test.js
 │   ├── matching.test.js
 │   ├── profile.test.js
+│   ├── action-plans.test.js
+│   ├── browser-smoke.mjs
+│   ├── progress.test.js
+│   ├── saved-opportunities.test.js
+│   ├── storage-migration.test.js
 │   └── storage.test.js
 ├── package.json
 └── README.md
@@ -247,6 +261,95 @@ Eligibility guidance evaluates only explicit, verified hard requirements represe
 
 Status precedence is: known conflict, then information needed, then source verification, then confirmed fit. Missing or unknown requirements never count as passes. Age conflicts are produced only when the opportunity record contains an explicit verified age boundary. Every result directs the student to check the full, current requirements at the official source.
 
+### Phase 3: My Applications and progress tracking
+
+Every ordinary opportunity card and personalised match card now has a visible, stateful Save/Saved control. Saving the same opportunity from both views updates one record instead of making a duplicate, and every rendered card is synchronized immediately. A newly saved record contains only its opportunity ID and the student's local planning data; the full directory record is not copied into browser storage.
+
+The **My Applications** section provides an empty-state route back to the directory or, when records exist:
+
+- a saved-opportunity count, status summary, and aggregate task progress;
+- filters for All, Saved, Researching, Preparing, Ready to apply, Submitted, Outcome received, and Archived;
+- deadline and deadline-status context from the current directory record;
+- a labelled application-status selector;
+- per-opportunity task progress and checklist management;
+- optional custom tasks and private plain-text notes; and
+- the current official-source link.
+
+Archived records remain stored and recoverable through the Archived filter. If a saved opportunity is temporarily absent from the directory dataset, its ID and planning work remain available; official details and generated-checklist reset stay unavailable until the directory record returns.
+
+When a valid profile and current opportunity record are both available, a saved card recalculates the current profile-match score and eligibility guidance. Neither value is stored as a permanent application or eligibility fact, so it can change after the profile or opportunity data changes.
+
+#### Storage schema and migration
+
+Phase 3 continues to use the single namespaced key `opportunityMapCoachState` and upgrades the state to schema version 2:
+
+```json
+{
+  "schemaVersion": 2,
+  "profile": {},
+  "savedOpportunities": {
+    "opp-001": {
+      "opportunityId": "opp-001",
+      "savedAt": "2026-07-20T12:00:00.000Z",
+      "updatedAt": "2026-07-20T12:00:00.000Z",
+      "applicationStatus": "saved",
+      "tasks": [],
+      "notes": ""
+    }
+  },
+  "preferences": {},
+  "updatedAt": "2026-07-20T12:00:00.000Z"
+}
+```
+
+A supported version 1 state is migrated in place on first load. The profile, preferences, and existing `updatedAt` value are preserved, and the empty reserved saved-opportunity map becomes the version 2 application store. Version 1 data containing unknown non-empty saved records is rejected rather than guessed at. Malformed JSON, unsupported shapes, and future schema versions are reported and left untouched. If writing the migration fails—for example because storage is unavailable or full—the original value is not overwritten and mutations remain blocked until storage can be recovered or the user explicitly resets it.
+
+Each subsequent save, status, task, or note mutation validates the complete supported structure and changes only the targeted record. A saved ID remains intact even if the matching directory record is temporarily unavailable.
+
+#### Application statuses
+
+Application status is separate from checklist progress and uses these stable values:
+
+- `saved`
+- `researching`
+- `preparing`
+- `ready-to-apply`
+- `submitted`
+- `outcome-received`
+- `archived`
+
+Status changes persist immediately and update the dashboard count and filters. Completing tasks does not silently advance application status.
+
+#### Action-plan rules
+
+Every newly saved opportunity receives nine **General guidance** tasks:
+
+1. Review the current official eligibility page.
+2. Confirm the current deadline or application window.
+3. Review required application documents and materials.
+4. Check whether a CV or résumé is required and update it if needed.
+5. Check whether a personal statement is required and prepare it if needed.
+6. Check whether references are required and request them if needed.
+7. Review the completed application against the official instructions.
+8. Submit through the official source.
+9. Save the submission confirmation.
+
+These are preparation prompts, not official programme instructions. Additional **Verified requirement** reminders are generated only from explicit verified `eligibilityGuidance.representedRequirements` entries supported by a current source field. They are phrased as items to verify at the official source; the action-plan engine does not infer documents, essays, tests, fees, dates, or other requirements from promotional text. It intentionally creates no target dates, including for fixed, rolling, year-round, vacancy-specific, unknown, or closed deadlines.
+
+Each task can be Not started, In progress, or Complete. Students may add, rename, and delete **Custom task** items; generated guidance cannot be renamed or individually deleted. Resetting a checklist requires confirmation, recreates the General guidance and Verified requirement items as Not started, and preserves custom tasks, notes, application status, and the original saved timestamp.
+
+Per-opportunity progress is:
+
+```text
+progress = round(100 × complete tasks / total tasks)
+```
+
+In-progress tasks remain visible but do not count as complete. Overall progress uses the same formula across every task in every saved record, including archived records. When there are no tasks, progress is 0%.
+
+Removing a freshly saved opportunity with untouched generated tasks happens directly. Confirmation is required when removal would also delete meaningful planning work: a changed application status, non-empty notes, a custom task, or any task moved beyond Not started. Custom-task deletion and generated-checklist reset also require confirmation.
+
+Private notes are stored as plain text, limited to 2,000 characters, and never inserted as HTML. They remain in this browser only. Students should not enter identification numbers, passwords, financial details, contact details, or other sensitive information.
+
 ### Current limitations and scope
 
 - The directory intentionally remains the same small inventory of nine opportunities; ranking quality is limited by that coverage.
@@ -254,14 +357,22 @@ Status precedence is: known conflict, then information needed, then source verif
 - Goal matching uses deterministic represented keywords, not semantic AI analysis.
 - Broad profile ranges, especially experience, may require the student to verify an exact requirement.
 - Programme criteria and deadlines can change after `lastVerified`; the official source is authoritative.
-- Browser profiles do not synchronize between devices or browsers and disappear if site storage is cleared.
-- There is no OpenAI or other API integration, account, backend, saved-opportunity feature, action plan, or progress tracker in Phase 2.
+- Browser profiles, saved opportunities, notes, and progress do not synchronize between devices or browsers and disappear if site storage is cleared.
+- The checklist deliberately contains general preparation guidance unless a task is explicitly labelled as a verified requirement.
+- No target dates or reminders are generated in Phase 3.
+- There is no OpenAI or other API integration, account, backend, database, cloud storage, or notification service.
 
-Run the focused development tests with:
+Run all focused development tests and JavaScript syntax checks with:
 
 ```powershell
 npm test
+npm run test:syntax
+npm run test:browser
 ```
+
+`test:browser` uses a locally installed Chrome or Edge executable to exercise the running app in an isolated temporary browser profile. Set `OPPORTUNITYMAP_BROWSER` to an alternate Chromium executable when needed. It checks directory and personalized saves, profile persistence, dashboard updates, task and note changes, reload recovery, confirmation behavior, console errors, and horizontal overflow at 1280px, 768px, 390px, and 320px.
+
+For a high-level manual check, serve the repository locally, save one opportunity from the normal directory and another from personalised results, then open **My Applications**. Change their statuses, update task states, add/edit/delete a custom task, save notes, apply each status filter, and reload the page to confirm persistence. Also verify that an unsave with planning work asks for confirmation and that cancelling the dialog keeps the record. Repeat with keyboard-only navigation and at desktop, tablet, 390px, and 320px widths.
 
 ## Research and analytics component
 
@@ -284,7 +395,7 @@ The JSON dataset is appropriate for the first version. A fuller platform can lat
 
 - a database and editorial content-management workflow;
 - optional account-based profile synchronization, if later justified;
-- saved opportunities and deadline reminders;
+- optional deadline reminders and calendar integration;
 - per-record verification history and automated stale-data checks;
 - optional AI-assisted application planning, with appropriate privacy and source safeguards;
 - country-level mapping and opportunity analytics;

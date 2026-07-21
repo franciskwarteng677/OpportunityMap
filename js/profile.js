@@ -573,8 +573,8 @@ export function initialiseProfileExperience({ root = document, storage } = {}) {
     const resettingState = mode === "state";
     elements.clearDialogTitle.textContent = resettingState ? "Reset coach data in this browser?" : "Clear your student profile?";
     elements.clearDialogDescription.textContent = resettingState
-      ? "This replaces incompatible OpportunityMap AI Coach data stored by this site. It may remove a profile and reserved coach state, and cannot be undone. Directory browsing is not affected."
-      : "This removes the profile from this browser. This action cannot be undone.";
+      ? "This replaces incompatible OpportunityMap AI Coach data stored by this site. It deletes any profile, saved opportunities, application statuses, checklist progress, custom tasks, and private notes, and cannot be undone. Directory browsing is not affected."
+      : "This removes only the profile from this browser. Saved opportunities, application progress, tasks, and notes remain. This action cannot be undone.";
     elements.confirmClear.textContent = resettingState ? "Reset coach data" : "Clear profile";
 
     if (typeof elements.clearDialog.showModal === "function") {
@@ -620,6 +620,7 @@ export function initialiseProfileExperience({ root = document, storage } = {}) {
   if (savedProfileIsValid) {
     currentProfile = initialValidation.profile;
     showSummary();
+    if (!loaded.ok) setStatus("error", loaded.message);
   } else if (profileExists) {
     showForm(currentProfile, { focus: false });
     setStatus("error", "Your saved profile is incomplete or uses unsupported profile values. Review it before saving again.");

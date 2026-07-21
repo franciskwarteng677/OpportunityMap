@@ -1,6 +1,7 @@
 "use strict";
 
 import { validateEligibilityGuidance } from "./js/eligibility.js";
+import { initialiseApplicationsExperience } from "./js/applications-ui.js";
 import { buildMatchExplanations, validateMatchingMetadata } from "./js/matching.js";
 import { initialiseMatchingExperience } from "./js/matches-ui.js";
 import { initialiseProfileExperience } from "./js/profile.js";
@@ -57,6 +58,7 @@ const elements = {
 let opportunities = [];
 let activeCategory = "All";
 let matchingExperience = null;
+let applicationsExperience = null;
 
 function normalise(value) {
   return String(value ?? "")
@@ -377,6 +379,7 @@ function createCard(opportunity, guidance = null) {
   );
 
   if (guidance) populateMatchGuidance(card, guidance);
+  applicationsExperience?.decorateOpportunityCard(card, opportunity);
 
   return card;
 }
@@ -523,6 +526,7 @@ function showLoadError(error) {
   elements.error.hidden = false;
   elements.resultCount.textContent = "Directory unavailable";
   matchingExperience?.setDataError();
+  applicationsExperience?.setDataError();
 
   if (window.location.protocol === "file:") {
     elements.errorMessage.textContent =
@@ -551,8 +555,9 @@ async function loadOpportunities() {
     renderDistribution(opportunities);
     setLoading(false);
     elements.grid.hidden = false;
-    applyFilters();
+    applicationsExperience?.setOpportunities(opportunities);
     matchingExperience?.setOpportunities(opportunities);
+    applyFilters();
   } catch (error) {
     showLoadError(error);
   }
@@ -600,6 +605,9 @@ function initialise() {
   elements.currentYear.textContent = new Date().getFullYear();
   bindEvents();
   const profileExperience = initialiseProfileExperience();
+  applicationsExperience = initialiseApplicationsExperience({
+    getProfile: profileExperience.getProfile,
+  });
   matchingExperience = initialiseMatchingExperience({
     getProfile: profileExperience.getProfile,
     editProfile: () => profileExperience.showForm(profileExperience.getProfile()),
