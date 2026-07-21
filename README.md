@@ -4,7 +4,7 @@ OpportunityMap AI Coach is a static, privacy-conscious opportunity discovery and
 
 > **OpenAI Build Week track:** Education
 >
-> **Public demo:** _Add the live deployment URL before final submission._
+> **Public demo:** [opportunitymap-gh.vercel.app](https://opportunitymap-gh.vercel.app)
 
 The application remains intentionally framework-free, with no backend, database, account system, cloud synchronization, or runtime API integration. Students can always browse the full directory without creating a profile.
 
